@@ -13,11 +13,11 @@ class Review(common_models.TimeStampedModel):
     delivery = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
-    user = models.OneToOneField(
-        "users.User", related_name="zzims", on_delete=models.CASCADE
+    user = models.ForeignKey(
+        "users.User", related_name="reviews", on_delete=models.CASCADE
     )
-    restaurant = models.ManyToManyField(
-        "restaurants.Restaurant", related_name="zzims", blank=True
+    restaurant = models.ForeignKey(
+        "restaurants.Restaurant", related_name="reviews", on_delete=models.CASCADE
     )
 
     def __str__(self):

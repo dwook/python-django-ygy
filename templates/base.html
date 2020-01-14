@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link href="{% static 'img/ygy_icon.jpg' %}" rel="shortcut icon" type="image/x-icon">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <title>{% block page_title %}{% endblock page_title %}</title>
+  </head>
+  <body>
+    <header class="container inset-0 max-w-full flex justify-between px-64 h-20 fixed border-none">
+      <div class="flex items-center w-1/2 ml-4">
+          <a class="mr-10" href="{% url "common:home" %}">
+            <img class="w-16" src="{% static 'img/ygy_logo.jpg' %}">
+          </a>
+      </div>
+      
+      {% include "partials/nav.html" %}
+    </header>
+      
+    {% block content %}{% endblock %}
+    
+    {% block javascript %} {% endblock %}
+    {% include "partials/footer.html" %}
+    
+  </body>
+</html>

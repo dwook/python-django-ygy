@@ -3,17 +3,12 @@ from django.utils.html import mark_safe
 from . import models
 
 
-@admin.register(models.Restaurant)
-class RestaurantAdmin(admin.ModelAdmin):
+@admin.register(models.Menu)
+class MenuAdmin(admin.ModelAdmin):
 
     list_display = (
         "__str__",
-        "owner",
-        "owner_comment",
-        "delivery_cost",
-        "minimum_amount",
-        "start_time",
-        "end_time",
+        "price",
         "get_thumbnail",
     )
 
@@ -22,10 +17,3 @@ class RestaurantAdmin(admin.ModelAdmin):
         return mark_safe(f"<img src='{obj.photo.url}' width='50px' />")
 
     get_thumbnail.short_description = "Thumbnail"
-
-
-@admin.register(models.PaymentMethod)
-class PaymentMethodAdmin(admin.ModelAdmin):
-
-    list_display = ("__str__",)
-

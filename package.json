@@ -1,0 +1,21 @@
+{
+  "name": "python-django-ygy",
+  "version": "1.0.0",
+  "description": "Default : https://github.com/github/gitignore/blob/master/Python.gitignore/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wooyaPark/python-django-ygy.git"
+  },
+  "homepage": "https://github.com/wooyaPark/python-django-ygy#readme",
+  "scripts": {
+    "css": "gulp"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-csso": "^4.0.1",
+    "gulp-postcss": "^8.0.0",
+    "gulp-sass": "^4.0.2",
+    "node-sass": "^4.13.0",
+    "tailwindcss": "^1.1.4"
+  }
+}

@@ -1,0 +1,26 @@
+from django import forms
+from . import models
+
+
+class LoginForm(forms.Form):
+
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={"placeholder": "이메일 주소 입력(필수)"})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "비밀번호 입력(필수)"})
+    )
+
+    def clean(self):
+        email = self.cleaned_data.get("email")
+        password = self.cleaned_data.get("password")
+
+        try:
+            user = models.User.objects.get(email=email)
+
+            if user.check_password(password):
+                return self.cleaned_data
+            else:
+                self.add_error("password", forms.ValidationError("Password is wrong"))
+        except models.User.DoesNotExist:
+            self.add_error("email", forms.ValidationError("User does not exist"))

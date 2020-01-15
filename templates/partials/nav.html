@@ -1,3 +1,12 @@
 <ul class="flex items-center text-lg font-medium h-full">
-    <li class="px-2 py-2 mr-5 text-white border border-yellow-200"><a href="#">로그인 | 회원가입</a></li>
+    {% if user.is_authenticated %}
+        <li class="px-2 py-2 mr-5 text-white border border-yellow-200">
+            <a href="{% url 'users:logout' %}">로그아웃</a>
+        </li>
+    {% else %}
+        <li class="px-2 py-2 mr-5 text-white border border-yellow-200">
+            <a href="{% url 'users:login' %}">로그인 | 회원가입</a>
+        </li>
+    {% endif %}
+    
 </ul>

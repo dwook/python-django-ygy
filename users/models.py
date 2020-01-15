@@ -19,6 +19,7 @@ class User(AbstractUser):
     login_method = models.CharField(
         max_length=20, choices=LOGIN_METHODS, default=LOGIN_EMAIL,
     )
+    nickname = models.CharField(max_length=100, blank=True)
     phone = models.CharField(max_length=13, blank=True)
 
     def get_absolute_url(self):

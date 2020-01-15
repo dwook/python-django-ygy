@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <link href="{% static 'img/ygy_icon.jpg' %}" rel="shortcut icon" type="image/x-icon">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-    <title>{% block page_title %}{% endblock page_title %}</title>
+    <title>요기요 - 즐거움은 요기부터. 배달음식 주문은 역시 요기요!</title>
   </head>
-  <body>
+  <body class="mt-20">
     <header class="container inset-0 max-w-full flex justify-between px-64 h-20 fixed border-none">
       <div class="flex items-center w-1/2 ml-4">
-          <a class="mr-10" href="{% url "common:home" %}">
+          <a class="mr-10" href="{% url 'common:home' %}">
             <img class="w-16" src="{% static 'img/ygy_logo.jpg' %}">
           </a>
       </div>

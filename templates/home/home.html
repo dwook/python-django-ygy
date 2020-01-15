@@ -1,13 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block page_title %}
-    요기요 - 즐거움은 요기부터. 배달음식 주문은 역시 요기요!
-{% endblock page_title %}
-
 {% block content %}
     <div class="flex flex-col items-center justify-center w-full h-64 my-4 bg-no-repeat bg-cover bg-center" style="background-image:url('{% static 'img/ygy_bg.jpg' %}')">
-        <div class="mt-16">
+        <div>
             <span class="text-white font-bold text-4xl">"어디로</span>
             <span class="text-yellow-400 font-bold text-4xl">배달</span>
             <span class="text-white font-bold text-4xl">해 드릴까요?"</span>
@@ -57,4 +53,4 @@
             $("#group-list").append(groupList)
         }
     </script>
-{% endblock %}
+{% endblock javascript %}

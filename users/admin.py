@@ -9,23 +9,13 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (
             "Custom Profile",
-            {
-                "fields": (
-                    "username",
-                    "email",
-                    "phone",
-                    "address",
-                    "address_detail",
-                    "login_method",
-                    "is_owner",
-                )
-            },
+            {"fields": ("email", "nickname", "phone", "login_method", "is_owner",)},
         ),
     )
 
     list_display = (
-        "username",
         "email",
+        "nickname",
         "phone",
         "login_method",
         "is_owner",

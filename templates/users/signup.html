@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="flex flex-col py-2 mx-64 items-center">
+        <span class="text-sm mt-8">SNS 계정으로도 간편하게 가입하실 수 있습니다.</span>
+        
+        {% include "mixins/social_login.html" %}
+        <div class="w-3/4 flex items-start font-bold"><span class="text-sm ">회원정보입력</span></div>
+        {% include 'mixins/auth_form.html' with form=form text="회원가입완료" %}
+  
+    </div>
+{% endblock content %}

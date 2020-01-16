@@ -1,12 +1,19 @@
-<ul class="flex items-center text-lg font-medium h-full">
-    {% if user.is_authenticated %}
-        <li class="px-2 py-2 mr-5 text-white border border-yellow-200">
-            <a href="{% url 'users:logout' %}">로그아웃</a>
-        </li>
-    {% else %}
-        <li class="px-2 py-2 mr-5 text-white border border-yellow-200">
-            <a href="{% url 'users:login' %}">로그인 | 회원가입</a>
-        </li>
-    {% endif %}
-    
-</ul>
+<div class="flex flex-col justify-center">
+    <div class="border border-teal-500">
+        <ul class="flex items-center text-lg font-normal h-full">
+            {% if user.is_authenticated %}
+                <li class="px-2 py-2 text-white">
+                    <a href="{% url 'users:edit-profile' user.pk %}">내 정보</a>
+                </li>
+                <span class="text-white">|</span>
+                <li class="px-2 py-2 text-white">
+                    <a href="{% url 'users:logout' %}">로그아웃</a>
+                </li>
+            {% else %}
+                <li class="px-2 py-2 text-white">
+                    <a href="{% url 'users:login' %}">로그인 | 회원가입</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>

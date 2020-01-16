@@ -70,3 +70,4 @@ class SignUpForm(forms.ModelForm):
         user = super().save(commit=False)
 
         return user
+

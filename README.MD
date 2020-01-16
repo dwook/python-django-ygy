@@ -14,3 +14,12 @@ Default : https://github.com/github/gitignore/blob/master/Python.gitignore/
 - User
 
 ## Templates
+
+- [x] Home
+- [x] Login
+- [x] Sign Up
+- [x] Profile
+- [ ] Restaurant
+- [ ] Menu
+- [ ] Zzim
+- [ ] Review

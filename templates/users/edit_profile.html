@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="flex flex-col py-2 px-64 items-center">
+        {% include 'mixins/auth_form.html' with form=form text="내 정보 수정" %}
+        {% if user.login_method == "email" %}
+        <div class="mt-5">
+            <a href="{% url 'users:edit-password' %}" class="text-red-600 font-bold">비밀번호를 변경하시겠습니까?</a>
+        </div>
+        {% endif %}
+    </div>
+{% endblock content %}

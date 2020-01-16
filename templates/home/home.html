@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-    <div class="flex flex-col items-center justify-center w-full h-64 my-4 bg-no-repeat bg-cover bg-center" style="background-image:url('{% static 'img/ygy_bg.jpg' %}')">
+    <div class="flex flex-col items-center justify-center max-w-full h-64 my-4 bg-no-repeat bg-cover bg-center" style="background-image:url('{% static 'img/ygy_bg.jpg' %}')">
         <div>
             <span class="text-white font-bold text-4xl">"어디로</span>
             <span class="text-yellow-400 font-bold text-4xl">배달</span>
@@ -15,7 +15,7 @@
         </form>
     </div>
     
-    <div class="flex flex-wrap mx-64 mb-10 text" id="group-list"></div>
+    <div class="flex flex-wrap px-64 mb-10 text" id="group-list"></div>
 {% endblock content %}
 
 {% block javascript %}
@@ -23,7 +23,7 @@
         $(function () {
             $.ajax({
                 type: "GET",
-                url: "/home/api/",
+                url: "/api/home/",
                 success: groupList,
                 dataType: "html",
             })

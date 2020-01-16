@@ -3,7 +3,8 @@ import requests
 import uuid
 from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
-from django.views.generic import FormView
+from django.views.generic import FormView, View, DetailView, UpdateView
+from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth import authenticate, login, logout
 from . import forms, models
 
@@ -189,3 +190,33 @@ def kakao_callback(request):
         return redirect(reverse("common:home"))
     except KakaoException:
         return redirect(reverse("users:login"))
+
+
+class EditProfileView(UpdateView):
+    template_name = "users/edit_profile.html"
+    model = models.User
+    fields = ("nickname", "phone")
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=form_class)
+        form.fields["nickname"].widget.attrs = {"placeholder": "닉네임"}
+        form.fields["phone"].widget.attrs = {"placeholder": "전화번호"}
+        return form
+
+    def get_success_url(self):
+        return self.request.user.get_absolute_url()
+
+
+class EditPasswordView(PasswordChangeView):
+
+    template_name = "users/edit_password.html"
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=form_class)
+        form.fields["old_password"].widget.attrs = {"placeholder": "현재 비밀번호"}
+        form.fields["new_password1"].widget.attrs = {"placeholder": "새로운 비밀번호"}
+        form.fields["new_password2"].widget.attrs = {"placeholder": "새로운 비밀번호 재확인"}
+        return form
+
+    def get_success_url(self):
+        return self.request.user.get_absolute_url()

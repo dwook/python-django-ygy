@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.shortcuts import reverse
 
 
 class User(AbstractUser):
@@ -23,4 +24,5 @@ class User(AbstractUser):
     phone = models.CharField(max_length=13, blank=True)
 
     def get_absolute_url(self):
-        pass
+        return reverse("users:edit-profile", kwargs={"pk": self.pk})
+

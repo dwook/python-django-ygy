@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-    <div class="flex flex-col py-2 mx-64 items-center">
+    <div class="flex flex-col py-2 px-64 items-center">
         <div class="my-4 w-32 h-12 bg-cover" style="background-image:url('{% static 'img/ygy_login.png' %}')"></div>
 
         {% include 'mixins/auth_form.html' with form=form text="로그인" %}

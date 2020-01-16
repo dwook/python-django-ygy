@@ -3,6 +3,10 @@
 
     {% for field in form %}
         <div class="input">
+            {% if text == '내 정보 수정' %}
+                {{field.label}}
+            {% endif %}
+
             {{field}}
             {% if field.errors %}
                 {% for error in field.errors %}

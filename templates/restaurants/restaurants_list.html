@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="flex flex-col items-center justify-center max-w-full h-24 my-4 bg-no-repeat bg-cover bg-center" style="background-image:url('{% static 'img/ygy_bg.jpg' %}')">
+        <form class="flex justify-center w-full" method="GET">
+            <input type="search" class="pl-3 h-10 w-1/4" value="서울시 송파구 문정2동..." placeholder="건물명, 도로명, 지명으로 검색하세요." required />
+            <button class="font-medium text-lg w-20 text-white bg-red-600"><a href="../../../restaurants/groups/2/"">검색</a></button>
+        </form>
+    </div>
+    <div class="px-64 text pb-2 mb-3 border-b border-gray-500" id="groups-list"></div>     
+    <div class="flex flex-wrap px-64 text mb-3" id="restaurants-list"></div>
+{% endblock content %}
+
+{% block javascript %}
+    <script>
+        $(function () {
+            $.ajax({
+                type: "GET",
+                url: "groups-list-api/",
+                success: groupsList,
+                dataType: "html",
+            });
+            $.ajax({
+                type: "GET",
+                url: "restaurants-list-api/",
+                success: restaurantsList,
+                dataType: "html",
+            });
+        });
+        
+        function groupsList(data) {
+            data = JSON.parse(data);
+            
+            const groups = data.groups;
+            let groupsList = "";
+            let group_id = 0;
+
+            groupsList += `<ul class="flex justify-between items-center">`
+
+            for (let i = 0; i < groups.length; i++) {
+                if (i === 0) continue; // 슈퍼레드 제거
+
+                if (groups[i].id === data.groups_id) {
+
+                    groupsList +=
+                    `
+                    <li class="px-2 border-b-2 border-black hover:border-black">
+                        <a href="../../../restaurants/groups/` + groups[i].id + `/">
+                            <span class="text-black cursor-pointer">` + groups[i].name + `</span>
+                        </a>
+                    </li>
+                    `
+                } else {
+                    groupsList +=
+                    `
+                    <li class="px-2 border-b-2 border-white hover:border-black ">
+                        <a href="../../../restaurants/groups/` + groups[i].id + `/"">
+                            <span class="text-black cursor-pointer">` + groups[i].name + `</span>
+                        </a>
+                    </li>
+                    `
+                }
+            }
+
+            groupsList += `</ul>`
+            
+            $("#groups-list").append(groupsList)
+        }
+
+        function restaurantsList(data) {
+            data = JSON.parse(data);
+            
+            const restaurants = data.restaurants;
+            let restaurantsList = "";
+            
+            restaurantsList += `<div class="w-full flex flex-wrap">`
+            
+            for (let i = 0; i < restaurants.length; i++) {
+                restaurantsList +=
+                `
+                    <div class="flex w-1/2 h-32 p-3 border border-gray-400">
+                        <div class="w-24 h-24 bg-cover bg-center" style="background-image: url('../../../media/` + restaurants[i].photo + `')">
+                        </div>    
+                        <div class="flex flex-col p-3 ml-3">
+                            <span class="text-black">` + restaurants[i].name + `</span>
+                            <span class="mt-3 text-black text-sm">배달요금 ` + restaurants[i].delivery_cost + `원 | 최소주문금액 : ` + restaurants[i].minimum_amount + `원</span>
+                        </div>    
+                    </div>
+                `
+            }
+
+            restaurantsList += `</div>`
+            $("#restaurants-list").append(restaurantsList)
+        }
+
+    </script>
+    
+{% endblock javascript %}

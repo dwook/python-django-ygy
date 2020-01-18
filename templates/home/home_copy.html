@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="flex flex-col items-center justify-center max-w-full h-64 my-4 bg-no-repeat bg-cover bg-center" style="background-image:url('{% static 'img/ygy_bg.jpg' %}')">
+        <div>
+            <span class="text-white font-bold text-4xl">"어디로</span>
+            <span class="text-yellow-400 font-bold text-4xl">배달</span>
+            <span class="text-white font-bold text-4xl">해 드릴까요?"</span>
+        </div>
+        <span class="text-white font-bold mb-2 ">배달 받으실 동 이름으로 검색해주세요</span>
+        <form class="flex justify-center w-full" method="GET">
+            <input type="search" class="pl-3 h-10 w-1/4" value="서울시 송파구 문정2동..." placeholder="건물명, 도로명, 지명으로 검색하세요." required />
+            <button class="font-medium text-lg w-20 text-white bg-red-600"><a href="groups/2/restaurants/">검색</a></button>
+        </form>
+    </div>
+    
+    <div class="flex flex-wrap px-64 text" id="groups-list"></div>
+    
+{% endblock content %}
+
+{% block javascript %}
+    <script>
+        $(function () {
+            $.ajax({
+                type: "GET",
+                url: "home-api/",
+                success: groupsList,
+                dataType: "html",
+            })
+        });
+        
+        function groupsList(data) {
+            data = JSON.parse(data);
+            
+            const groups = data.groups;
+            let groupsList = "";
+            let i = 0;
+
+            for (i = 0; i < groups.length; i++) {
+                if (i === 0) {
+                    groups[i].name = ""; // 슈퍼레드 문구만 제거
+
+                    groupsList +=
+                    `
+                    <div class="w-1/4 mb-2 px-2 overflow-hidden">
+                        <a href="#">
+                            <div class="w-full h-56 bg-cover bg-center rounded-lg mb-2 border border-gray-400" style="background-image: url('../../media/` + groups[i].photo + `')" >
+                                <span class="text-black mt-4 ml-4 font-bold block truncate">` + groups[i].name + `</span>
+                            </div>
+                        </a>
+                    </div>
+                    `
+                } else {
+                    groupsList +=
+                    `
+                    <div class="w-1/4 mb-2 px-2 overflow-hidden">
+                        <a href="groups/` + groups[i].pk + `/restaurants/">
+                            <div class="w-full h-56 bg-cover bg-center rounded-lg mb-2 border border-gray-400" style="background-image: url('../../media/` + groups[i].photo + `')" >
+                                <span class="text-black mt-4 ml-4 font-bold block truncate">` + groups[i].name + `</span>
+                            </div>
+                        </a>
+                    </div>
+                    `
+                }
+            }
+            $("#groups-list").append(groupsList)
+        }
+    </script>
+{% endblock javascript %}

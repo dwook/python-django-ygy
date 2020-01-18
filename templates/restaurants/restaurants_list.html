@@ -5,10 +5,10 @@
     <div class="flex flex-col items-center justify-center max-w-full h-24 my-4 bg-no-repeat bg-cover bg-center" style="background-image:url('{% static 'img/ygy_bg.jpg' %}')">
         <form class="flex justify-center w-full" method="GET">
             <input type="search" class="pl-3 h-10 w-1/4" value="서울시 송파구 문정2동..." placeholder="건물명, 도로명, 지명으로 검색하세요." required />
-            <button class="font-medium text-lg w-20 text-white bg-red-600"><a href="../../../restaurants/groups/2/"">검색</a></button>
+            <button class="font-medium text-lg w-20 text-white bg-red-600"><a href="../../../groups/2/restaurants/">검색</a></button>
         </form>
     </div>
-    <div class="px-64 text pb-2 mb-3 border-b border-gray-500" id="groups-list"></div>     
+    <div class="flex px-64 text pb-2 mb-3 border-b border-gray-500" id="groups-list"></div>     
     <div class="flex flex-wrap px-64 text mb-3" id="restaurants-list"></div>
 {% endblock content %}
 
@@ -27,6 +27,12 @@
                 success: restaurantsList,
                 dataType: "html",
             });
+            $.ajax({
+                type: "GET",
+                url: "search-api/",
+                success: restaurantsList,
+                dataType: "json",
+            });
         });
         
         function groupsList(data) {
@@ -34,19 +40,18 @@
             
             const groups = data.groups;
             let groupsList = "";
-            let group_id = 0;
 
-            groupsList += `<ul class="flex justify-between items-center">`
+            groupsList += `<ul class="flex justify-between items-center w-2/3">`
 
             for (let i = 0; i < groups.length; i++) {
                 if (i === 0) continue; // 슈퍼레드 제거
 
-                if (groups[i].id === data.groups_id) {
+                if (groups[i].pk === data.group_pk) {
 
                     groupsList +=
                     `
                     <li class="px-2 border-b-2 border-black hover:border-black">
-                        <a href="../../../restaurants/groups/` + groups[i].id + `/">
+                        <a href="../../../groups/` + groups[i].pk + `/restaurants/">
                             <span class="text-black cursor-pointer">` + groups[i].name + `</span>
                         </a>
                     </li>
@@ -54,8 +59,8 @@
                 } else {
                     groupsList +=
                     `
-                    <li class="px-2 border-b-2 border-white hover:border-black ">
-                        <a href="../../../restaurants/groups/` + groups[i].id + `/"">
+                    <li class="px-2 border-b-2 border-white hover:border-black">
+                        <a href="../../../groups/` + groups[i].pk + `/restaurants/">
                             <span class="text-black cursor-pointer">` + groups[i].name + `</span>
                         </a>
                     </li>
@@ -64,6 +69,14 @@
             }
 
             groupsList += `</ul>`
+            groupsList += 
+            `
+            <div class="w-1/3 text-right">
+                <form method="GET" action="../../../groups/` + data.group_pk + `/restaurants/search-api/">
+                    <input class="p-3 ml-3 w-3/4" type="text"  name="search" placeholder="음식점 또는 메뉴로 검색">
+                </form>
+            </div>
+            `
             
             $("#groups-list").append(groupsList)
         }
@@ -79,14 +92,15 @@
             for (let i = 0; i < restaurants.length; i++) {
                 restaurantsList +=
                 `
-                    <div class="flex w-1/2 h-32 p-3 border border-gray-400">
-                        <div class="w-24 h-24 bg-cover bg-center" style="background-image: url('../../../media/` + restaurants[i].photo + `')">
-                        </div>    
+                <a class="w-1/2 h-32" href="../../../menus/restaurants/` + restaurants[i].pk + `/groups/` + restaurants[i].group__pk + `/">
+                    <div class="flex p-3 border border-gray-400">
+                        <div class="w-24 h-24 bg-cover bg-center" style="background-image: url('../../../media/` + restaurants[i].photo + `')"></div>    
                         <div class="flex flex-col p-3 ml-3">
                             <span class="text-black">` + restaurants[i].name + `</span>
                             <span class="mt-3 text-black text-sm">배달요금 ` + restaurants[i].delivery_cost + `원 | 최소주문금액 : ` + restaurants[i].minimum_amount + `원</span>
-                        </div>    
+                        </div>   
                     </div>
+                </a>
                 `
             }
 

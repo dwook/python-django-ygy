@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="flex flex-col items-center justify-center max-w-full h-24 my-4 bg-no-repeat bg-cover bg-center" style="background-image:url('{% static 'img/ygy_bg.jpg' %}')">
+        <form class="flex justify-center w-full" method="GET">
+            <input type="search" class="pl-3 h-10 w-1/4" value="서울시 송파구 문정2동..." placeholder="건물명, 도로명, 지명으로 검색하세요." required />
+            <button class="font-medium text-lg w-20 text-white bg-red-600"><a href="restaurants/groups/2/"">검색</a></button>
+        </form>
+    </div>
+    <div class="px-64 text pb-2 mb-3 border-b border-gray-500" id="groups-list"></div>     
+    <div class="flex flex-wrap px-64 text mb-3" id="restaurants-list"></div>
+{% endblock content %}
+
+{% block javascript %}
+    
+    
+{% endblock javascript %}

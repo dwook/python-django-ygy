@@ -6,6 +6,7 @@ app_name = "common"
 
 
 urlpatterns = [
-    path("", views.home_view, name="home"),
-    path("home-api/", group_views.HomeApiView.as_view(), name="home-api"),
+    path("", views.HomeView.as_view(), name="home")
+    # path("", views.home_view, name="home"),
+    # path("home-api/", group_views.HomeApiView.as_view(), name="home-api"),
 ]

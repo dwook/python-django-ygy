@@ -3,7 +3,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.generic import View
 from django.views.generic.list import BaseListView
-from django.views.generic.edit import BaseCreateView
+from django.views.generic.edit import BaseFormView, BaseCreateView
+from django.forms import model_to_dict
 import json
 from groups.models import Group
 from restaurants.models import Restaurant
@@ -27,7 +28,6 @@ class GroupsBarApi(BaseListView):
 
     def render_to_response(self, context, **response_kwargs):
         groups = list(context["object_list"].values())
-        print(groups)
         return JsonResponse(data=groups, safe=False)
 
 
@@ -36,6 +36,18 @@ class RestaurantsListApi(View):
     def get(self, *args, **kwargs):
         group_id = kwargs.get("group_id")
         restaurants = list(Restaurant.objects.filter(group=group_id).values())
+
+        return JsonResponse(data=restaurants, safe=False)
+
+
+class SearchRestaurantsApi(View):
+    def post(self, *args, **kwargs):
+        name = json.loads(self.request.body).get("name")
+
+        search_restaurants = Restaurant.objects.filter(name__icontains=name).union(
+            Restaurant.objects.filter(menus__name__icontains=name)
+        )
+        restaurants = list(search_restaurants.values())
 
         return JsonResponse(data=restaurants, safe=False)
 

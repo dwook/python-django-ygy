@@ -2,32 +2,35 @@
 {% load static %}
 
 {% block content %}
-    <div class="flex flex-col items-center justify-center max-w-full h-24 my-4 bg-no-repeat bg-cover bg-center" style="background-image:url('{% static 'img/ygy_bg.jpg' %}')">
+    <div class="flex flex-col items-center justify-center max-w-full h-24 mt-4 bg-no-repeat bg-cover bg-center" style="background-image:url('{% static 'img/ygy_bg.jpg' %}')">
         <div class="flex justify-center w-full">
-            <input type="search" class="pl-3 h-10 w-1/4" value="서울시 송파구 문정2동..." placeholder="건물명, 도로명, 지명으로 검색하세요." required />
-            <div class="flex flex-col justify-center bg-red-600">
-                <span class="text-center font-medium text-lg w-20 text-white ">검색</span>
+            <div class="flex flex-col justify-center bg-green-500 rounded-l-lg">
+                <span class="text-center font-medium text-lg w-20 text-white">주소</span>
             </div>
+            <input type="search" class="pl-3 h-10 w-1/4 rounded-r-lg" value="서울시 송파구 문정2동..." placeholder="건물명, 도로명, 지명으로 검색하세요." required />
         </div>
     </div>
     <div id="contents">
-        <div class="flex px-64 text pb-2 mb-3 border-b border-gray-500">
+        <div class="flex px-64 py-2 mb-3 border-b border-gray-500">
             <ul class="flex justify-between items-center w-2/3">
                 <li v-for="group in groups" v-if="group.id != 1" class="px-2">
-                    <div v-if="group.id == group_id" class="border-b-2 border-black hover:border-black" :name="group.id" v-on:click="add_todo()">
+                    <div v-if="group.id == group_id" class="border-b-2 border-black hover:border-black">
                         <a v-bind:href="'../../../groups/' + group.id + '/'">
                             <span class="text-black cursor-pointer">[[group.name]]</span>
                         </a>
                     </div>
-                    <div v-else class="border-b-2 border-white hover:border-black" :name="group.id" v-on:click="add_todo()">
+                    <div v-else class="border-b-2 border-white hover:border-black">
                         <a v-bind:href="'../../../groups/' + group.id + '/'">
                             <span class="text-black cursor-pointer">[[group.name]]</span>
                         </a>
                     </div>
                 </li>
             </ul>
+            <div class="flex justify-end w-1/3 h-full">
+                <input v-on:keyup.enter="search_restaurants()" v-model:trim="name" class="p-0 pl-2 w-3/4 h-8 text-sm" type="text" placeholder="음식점 또는 메뉴로 검색">
+            </div>
         </div>
-        <div class="flex flex-wrap px-64 text mb-3" id="restaurants-list">
+        <div class="flex flex-wrap px-64 text mb-3">
             <div class="w-full flex flex-wrap">
                 <a v-for="restaurant in restaurants" class="w-1/2 h-32" href="#">
                     <div class="flex p-3 border border-gray-400">
@@ -50,9 +53,10 @@
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
     var vm = new Vue({
-        delimiters: ['[[', ']]'],
-        el: '#contents',
+        delimiters: ["[[", "]]"],
+        el: "#contents",
         data: {
+            name: "",
             groups: [],
             restaurants: [],
             group_id: "{{group_id}}",
@@ -66,9 +70,9 @@
             fetch_all_groups: function () {
                 var vm = this;
 
-                axios.get('/api/groups-bar/')
+                axios.get("/api/groups-bar/")
                     .then(function (res) {
-                        console.log("res.data", res.data)
+                        console.log("res.data", res.data);
                         vm.groups = res.data;
                         
                     })
@@ -79,16 +83,31 @@
             fetch_all_restaurants: function () {
                 var vm = this;
 
-                axios.get('/api/{{group_id}}/restaurants-list/')
+                axios.get("/api/{{group_id}}/restaurants-list/")
                     .then(function (res) {
-                        console.log("res.data", res.data)
+                        console.log("res.data", res.data);
                         vm.restaurants = res.data;
-                        console.log("vm.restaurants", vm.restaurants)
+                        console.log("vm.restaurants", vm.restaurants);
                     })
                     .catch(function (err) {
                         console.log("GET ERR", err);
                     })
-            }
+            },
+            search_restaurants: function () {
+                var vm = this;
+                var postData = {name: this.name};
+                console.log(postData);
+                axios.post("/api/search-restaurants/", postData)
+                    .then(function (res) {
+                        console.log("post res.data", res.data);
+                        vm.restaurants = res.data;
+                        console.log("post vm.restaurants", vm.restaurants);
+                    })
+                    .catch(function (err) {
+                        console.log("POST ERR", err)
+                    })
+                this.name = "";
+            },
         },
     })
 </script>

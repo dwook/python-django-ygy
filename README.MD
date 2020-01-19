@@ -16,10 +16,17 @@ Default : https://github.com/github/gitignore/blob/master/Python.gitignore/
 ## Templates
 
 - [x] Home
-- [x] Login
+- [x] Login/Logout
 - [x] Sign Up
 - [x] Profile
-- [ ] Restaurant
-- [ ] Menu
-- [ ] Zzim
-- [ ] Review
+- [x] Restaurants List
+- [ ] Restaurants Detail
+- [ ] Restaurants Update
+- [ ] Restaurants Delete
+- [ ] Restaurants Create
+- [ ] Menus List
+- [ ] Menus Detail
+- [ ] Menus Update
+- [ ] Menus Delete
+- [ ] Menus Create
+- [ ] Zzim & Zzims List

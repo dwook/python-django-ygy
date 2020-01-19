@@ -12,4 +12,9 @@ urlpatterns = [
         views.RestaurantsListApi.as_view(),
         name="restaurants-list-api",
     ),
+    path(
+        "search-restaurants/",
+        views.SearchRestaurantsApi.as_view(),
+        name="search-restaurants-api",
+    ),
 ]

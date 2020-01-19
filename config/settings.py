@@ -45,7 +45,6 @@ PROJECT_APPS = [
     "users.apps.UsersConfig",
     "restaurants.apps.RestaurantsConfig",
     "menus.apps.MenusConfig",
-    "reviews.apps.ReviewsConfig",
     "zzims.apps.ZzimsConfig",
 ]
 

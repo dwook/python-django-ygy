@@ -13,16 +13,9 @@
     <div id="contents">
         <div class="flex px-64 py-2 mb-3 border-b border-gray-500">
             <ul class="flex justify-between items-center w-2/3">
-                <li v-for="group in groups" v-if="group.id != 1" class="px-2">
-                    <div v-if="group.id == group_id" class="border-b-2 border-black hover:border-black">
-                        <a v-bind:href="'../../../groups/' + group.id + '/'">
-                            <span class="text-black cursor-pointer">[[group.name]]</span>
-                        </a>
-                    </div>
-                    <div v-else class="border-b-2 border-white hover:border-black">
-                        <a v-bind:href="'../../../groups/' + group.id + '/'">
-                            <span class="text-black cursor-pointer">[[group.name]]</span>
-                        </a>
+                <li v-on:click="fetch_all_restaurants(group.id)" v-for="group in groups" v-if="group.id != 1" class="px-2">
+                    <div v-on:click="ChangeUrl(group.id)" class="border-b-2 border-white hover:border-black">
+                       <span class="text-black cursor-pointer">[[group.name]]</span>
                     </div>
                 </li>
             </ul>
@@ -47,15 +40,26 @@
 {% endblock content %}
 
 {% block javascript %}
+<script type="text/javascript">
+function ChangeUrl(g_id) {
+    if(typeof(history.pushState) != "undefined") {
+        history.pushState(null, null, "../../groups/" + g_id + "/")
+    }
+    else {
+        location.href = "../../groups/" + g_id + "/";
+    }
+}
+</script>
 <script>
     // CSRF Token 관련하여 전역변수로 선언
     axios.defaults.xsrfCookieName = 'csrftoken';
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-
+    var id = 0;
     var vm = new Vue({
         delimiters: ["[[", "]]"],
         el: "#contents",
         data: {
+            
             name: "",
             groups: [],
             restaurants: [],
@@ -64,7 +68,7 @@
         created: function () {
             console.log("created()");
             this.fetch_all_groups();
-            this.fetch_all_restaurants();
+            this.fetch_all_restaurants(id);
         },
         methods: {
             fetch_all_groups: function () {
@@ -80,10 +84,13 @@
                         console.log("GET ERR", err);
                     })
             },
-            fetch_all_restaurants: function () {
+            fetch_all_restaurants: function (g_id) {
                 var vm = this;
-
-                axios.get("/api/{{group_id}}/restaurants-list/")
+                if (g_id == 0) {
+                    g_id = {{group_id}};
+                }
+                console.log(g_id);
+                axios.get("/api/" + g_id + "/restaurants-list/")
                     .then(function (res) {
                         console.log("res.data", res.data);
                         vm.restaurants = res.data;

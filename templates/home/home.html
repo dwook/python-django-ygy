@@ -19,7 +19,13 @@
     
     <div class="flex flex-wrap px-64 text" id="groups-list">
         <div v-for="group in groups" class="w-1/4 mb-2 px-2 overflow-hidden">
-            <a v-bind:href="'../../groups/' + group.id">
+            <a v-if="group.id == 1" href="../../#">
+                <div v-bind:style="{'background-image': 'url(../../media/' + group.photo + ')' }" class="w-full h-56 bg-cover bg-center rounded-lg mb-2 border border-gray-400">
+                    <span v-if="group.id == 1" class="text-black mt-4 ml-4 font-bold block truncate"></span>
+                    <span v-else class="text-black mt-4 ml-4 font-bold block truncate">[[group.name]]</span>
+                </div>
+            </a>
+            <a v-else v-bind:href="'../../groups/' + group.id">
                 <div v-bind:style="{'background-image': 'url(../../media/' + group.photo + ')' }" class="w-full h-56 bg-cover bg-center rounded-lg mb-2 border border-gray-400">
                     <span v-if="group.id == 1" class="text-black mt-4 ml-4 font-bold block truncate"></span>
                     <span v-else class="text-black mt-4 ml-4 font-bold block truncate">[[group.name]]</span>
@@ -51,7 +57,7 @@
         methods: {
             fetch_all_groups: function () {
                 var vm = this;
-
+                console.log(vm);
                 axios.get("/api/home/")
                     .then(function (res) {
                         console.log("res.data", res.data);

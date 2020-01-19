@@ -15,6 +15,7 @@ class HomeApiView(View):
         return HttpResponse(json.dumps(json_data), content_type="application/json",)
 
 
+
 # FBV
 
 def home_view_api(request):

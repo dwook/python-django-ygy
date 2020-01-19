@@ -1,8 +1,35 @@
-from django.views.generic import View
+from django.views.generic import View, TemplateView
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+from groups import models as group_models
 from . import models, forms
 import json
+
+
+class RestaurantView(View):
+    def get(self, request, *args, **kwargs):
+        group_id = kwargs.get("group_id")
+
+        return render(
+            request, "restaurants/restaurants_list.html", {"group_id": group_id},
+        )
+
+    # template_name = "restaurants/restaurants_list.html"
+
+
+"""
+class RestaurantView(View):
+    def get(self, request, *args, **kwargs):
+        group_pk = kwargs.get("group_pk")
+        groups = group_models.Group.objects.all()
+        restaurants = models.Group.objects.all()
+
+        return render(
+            request,
+            "restaurants/restaurants_list.html",
+            {"group_pk": group_pk, "groups": groups, "restaurants": restaurants},
+        )
+"""
 
 
 def restaurants_list_view(request, group_pk):

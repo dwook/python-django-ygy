@@ -3,111 +3,93 @@
 
 {% block content %}
     <div class="flex flex-col items-center justify-center max-w-full h-24 my-4 bg-no-repeat bg-cover bg-center" style="background-image:url('{% static 'img/ygy_bg.jpg' %}')">
-        <form class="flex justify-center w-full" method="GET">
+        <div class="flex justify-center w-full">
             <input type="search" class="pl-3 h-10 w-1/4" value="서울시 송파구 문정2동..." placeholder="건물명, 도로명, 지명으로 검색하세요." required />
-            <button class="font-medium text-lg w-20 text-white bg-red-600"><a href="../../../groups/2/restaurants/">검색</a></button>
-        </form>
-    </div>
-    <div class="flex px-64 text pb-2 mb-3 border-b border-gray-500" id="groups-list"></div>     
-    <div class="flex flex-wrap px-64 text mb-3" id="restaurants-list"></div>
-{% endblock content %}
-
-{% block javascript %}
-    <script>
-        $(function () {
-            $.ajax({
-                type: "GET",
-                url: "groups-list-api/",
-                success: groupsList,
-                dataType: "html",
-            });
-            $.ajax({
-                type: "GET",
-                url: "restaurants-list-api/",
-                success: restaurantsList,
-                dataType: "html",
-            });
-            $.ajax({
-                type: "GET",
-                url: "search-api/",
-                success: restaurantsList,
-                dataType: "json",
-            });
-        });
-        
-        function groupsList(data) {
-            data = JSON.parse(data);
-            
-            const groups = data.groups;
-            let groupsList = "";
-
-            groupsList += `<ul class="flex justify-between items-center w-2/3">`
-
-            for (let i = 0; i < groups.length; i++) {
-                if (i === 0) continue; // 슈퍼레드 제거
-
-                if (groups[i].pk === data.group_pk) {
-
-                    groupsList +=
-                    `
-                    <li class="px-2 border-b-2 border-black hover:border-black">
-                        <a href="../../../groups/` + groups[i].pk + `/restaurants/">
-                            <span class="text-black cursor-pointer">` + groups[i].name + `</span>
-                        </a>
-                    </li>
-                    `
-                } else {
-                    groupsList +=
-                    `
-                    <li class="px-2 border-b-2 border-white hover:border-black">
-                        <a href="../../../groups/` + groups[i].pk + `/restaurants/">
-                            <span class="text-black cursor-pointer">` + groups[i].name + `</span>
-                        </a>
-                    </li>
-                    `
-                }
-            }
-
-            groupsList += `</ul>`
-            groupsList += 
-            `
-            <div class="w-1/3 text-right">
-                <form method="GET" action="../../../groups/` + data.group_pk + `/restaurants/search-api/">
-                    <input class="p-3 ml-3 w-3/4" type="text"  name="search" placeholder="음식점 또는 메뉴로 검색">
-                </form>
+            <div class="flex flex-col justify-center bg-red-600">
+                <span class="text-center font-medium text-lg w-20 text-white ">검색</span>
             </div>
-            `
-            
-            $("#groups-list").append(groupsList)
-        }
-
-        function restaurantsList(data) {
-            data = JSON.parse(data);
-            
-            const restaurants = data.restaurants;
-            let restaurantsList = "";
-            
-            restaurantsList += `<div class="w-full flex flex-wrap">`
-            
-            for (let i = 0; i < restaurants.length; i++) {
-                restaurantsList +=
-                `
-                <a class="w-1/2 h-32" href="../../../menus/restaurants/` + restaurants[i].pk + `/groups/` + restaurants[i].group__pk + `/">
+        </div>
+    </div>
+    <div id="contents">
+        <div class="flex px-64 text pb-2 mb-3 border-b border-gray-500">
+            <ul class="flex justify-between items-center w-2/3">
+                <li v-for="group in groups" v-if="group.id != 1" class="px-2">
+                    <div v-if="group.id == group_id" class="border-b-2 border-black hover:border-black" :name="group.id" v-on:click="add_todo()">
+                        <a v-bind:href="'../../../groups/' + group.id + '/'">
+                            <span class="text-black cursor-pointer">[[group.name]]</span>
+                        </a>
+                    </div>
+                    <div v-else class="border-b-2 border-white hover:border-black" :name="group.id" v-on:click="add_todo()">
+                        <a v-bind:href="'../../../groups/' + group.id + '/'">
+                            <span class="text-black cursor-pointer">[[group.name]]</span>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="flex flex-wrap px-64 text mb-3" id="restaurants-list">
+            <div class="w-full flex flex-wrap">
+                <a v-for="restaurant in restaurants" class="w-1/2 h-32" href="#">
                     <div class="flex p-3 border border-gray-400">
-                        <div class="w-24 h-24 bg-cover bg-center" style="background-image: url('../../../media/` + restaurants[i].photo + `')"></div>    
+                        <div class="w-24 h-24 bg-cover bg-center" v-bind:style="{'background-image': 'url(../../media/' + restaurant.photo + ')' }"></div>    
                         <div class="flex flex-col p-3 ml-3">
-                            <span class="text-black">` + restaurants[i].name + `</span>
-                            <span class="mt-3 text-black text-sm">배달요금 ` + restaurants[i].delivery_cost + `원 | 최소주문금액 : ` + restaurants[i].minimum_amount + `원</span>
+                            <span class="text-black">[[restaurant.name]]</span>
+                            <span class="mt-3 text-black text-xs">배달요금 : [[restaurant.delivery_cost]]원 | 최소주문금액 : [[restaurant.minimum_amount]]원</span>
                         </div>   
                     </div>
                 </a>
-                `
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+    // CSRF Token 관련하여 전역변수로 선언
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+    var vm = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#contents',
+        data: {
+            groups: [],
+            restaurants: [],
+            group_id: "{{group_id}}",
+        },
+        created: function () {
+            console.log("created()");
+            this.fetch_all_groups();
+            this.fetch_all_restaurants();
+        },
+        methods: {
+            fetch_all_groups: function () {
+                var vm = this;
+
+                axios.get('/api/groups-bar/')
+                    .then(function (res) {
+                        console.log("res.data", res.data)
+                        vm.groups = res.data;
+                        
+                    })
+                    .catch(function (err) {
+                        console.log("GET ERR", err);
+                    })
+            },
+            fetch_all_restaurants: function () {
+                var vm = this;
+
+                axios.get('/api/{{group_id}}/restaurants-list/')
+                    .then(function (res) {
+                        console.log("res.data", res.data)
+                        vm.restaurants = res.data;
+                        console.log("vm.restaurants", vm.restaurants)
+                    })
+                    .catch(function (err) {
+                        console.log("GET ERR", err);
+                    })
             }
-
-            restaurantsList += `</div>`
-            $("#restaurants-list").append(restaurantsList)
-        }
-
-    </script>
-    
+        },
+    })
+</script>
 {% endblock javascript %}

@@ -5,12 +5,17 @@ from restaurants import views as restaurant_views
 app_name = "groups"
 
 urlpatterns = [
-    path("<int:group_pk>/", restaurant_views.restaurants_list_view, name="detail",),
+    # path("<int:group_pk>/", restaurant_views.RestaurantView.as_view(), name="detail"),
     path(
-        "<int:group_pk>/restaurants/",
-        restaurant_views.restaurants_list_view,
+        "<int:group_id>/",
+        restaurant_views.RestaurantView.as_view(),
         name="restaurants-list",
     ),
+    # path(
+    #    "<int:group_pk>/restaurants/",
+    #    restaurant_views.restaurants_list_view,
+    #    name="restaurants-list",
+    # ),
     path(
         "<int:group_pk>/restaurants/groups-list-api/",
         views.GroupListApiView.as_view(),

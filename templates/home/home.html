@@ -17,22 +17,51 @@
         </div>
     </div>
     
-    <div class="flex flex-wrap px-64 text">
-        {% for group in groups %}
-            <div class="w-1/4 mb-2 px-2 overflow-hidden">
-                <a href="{% url 'groups:detail' group.pk %}">
-                    <div class="w-full h-56 bg-cover bg-center rounded-lg mb-2 border border-gray-400" style="background-image: url({{group.photo.url}})">
-                        <span class="text-black mt-4 ml-4 font-bold block truncate">
-                        {% if group.name == "Super-Red" %}
-                            
-                        {% else %}
-                            {{group.name}}
-                        {% endif %}
-                        </span>
-                    </div>
-                </a>
-            </div>
-        {% endfor %}
+    <div class="flex flex-wrap px-64 text" id="groups-list">
+        <div v-for="group in groups" class="w-1/4 mb-2 px-2 overflow-hidden">
+            <a v-bind:href="'../../groups/' + group.id">
+                <div v-bind:style="{'background-image': 'url(../../media/' + group.photo + ')' }" class="w-full h-56 bg-cover bg-center rounded-lg mb-2 border border-gray-400">
+                    <span v-if="group.id == 1" class="text-black mt-4 ml-4 font-bold block truncate"></span>
+                    <span v-else class="text-black mt-4 ml-4 font-bold block truncate">[[group.name]]</span>
+                </div>
+            </a>
+        </div>
     </div>
-    
 {% endblock content %}
+
+{% block javascript %}
+<script>
+    // CSRF Token 관련하여 전역변수로 선언
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+    var vm = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#groups-list',
+        data: {
+            id: "",
+            name: "",
+            photo: "",
+            groups: [],
+        },
+        created: function () {
+            console.log("created()");
+            this.fetch_all_groups();
+        },
+        methods: {
+            fetch_all_groups: function () {
+                var vm = this;
+
+                axios.get('/api/home/')
+                    .then(function (res) {
+                        console.log("res.data", res.data);
+                        vm.groups = res.data;
+                    })
+                    .catch(function (err) {
+                        console.log("GET ERR", err);
+                    })
+            },
+        },
+    })
+</script>
+{% endblock javascript %}

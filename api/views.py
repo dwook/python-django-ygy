@@ -58,9 +58,28 @@ class SearchRestaurantsApi(View):
 class RestaurantDetailApi(View):
     def get(self, request, *args, **kwargs):
         restaurant_id = kwargs.get("restaurant_id")
-        restaurant = list(Restaurant.objects.filter(id=restaurant_id).values())
+        # print(Restaurant.objects.all().values())
+        restaurant = list(
+            Restaurant.objects.filter(id=restaurant_id).values(
+                "name",
+                "owner_comment",
+                "delivery_cost",
+                "minimum_amount",
+                "start_time",
+                "end_time",
+                "photo",
+            )
+        )
+        payment_method = list(
+            Restaurant.objects.filter(id=restaurant_id).values("payment_method__name",)
+        )
+        json_data = {
+            "restaurant": restaurant,
+            "payment_method": payment_method,
+        }
+        # print(json_data)
         # print(str(Restaurant.objects.filter(id=restaurant_id).values().query))
-        return JsonResponse(data=restaurant, safe=False)
+        return JsonResponse(data=json_data, safe=False)
 
 
 @method_decorator(ensure_csrf_cookie, name="dispatch")
@@ -68,7 +87,7 @@ class MenusListApi(View):
     def get(self, request, *args, **kwargs):
         restaurant_id = kwargs.get("restaurant_id")
         restaurant = list(Menu.objects.filter(restaurant=restaurant_id).values())
-        print(restaurant)
+
         # print(str(Restaurant.objects.filter(id=restaurant_id).values().query))
         return JsonResponse(data=restaurant, safe=False)
 

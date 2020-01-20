@@ -21,10 +21,10 @@
             <div class="w-full flex flex-wrap">
                 <a v-for="restaurant in restaurants" class="w-1/2 h-32" v-bind:href="'../../restaurants/' + restaurant.id + '/'">
                     <div class="flex p-3 border border-gray-400">
-                        <div class="w-24 h-24 bg-cover bg-center" v-bind:style="{'background-image': 'url(../../media/' + restaurant.photo + ')' }"></div>    
+                        <div class="w-24 h-24 bg-cover bg-center border border-gray-400" v-bind:style="{'background-image': 'url(../../media/' + restaurant.photo + ')' }"></div>    
                         <div class="flex flex-col p-3 ml-3">
                             <span class="text-black">[[restaurant.name]]</span>
-                            <span class="mt-3 text-black text-xs">배달요금 : [[restaurant.delivery_cost]]원 | 최소주문금액 : [[restaurant.minimum_amount]]원</span>
+                            <span class="mt-3 text-black text-xs">최소주문금액 : [[restaurant.minimum_amount]]원 | 배달요금 : [[restaurant.delivery_cost]]원</span>
                         </div>   
                     </div>
                 </a>

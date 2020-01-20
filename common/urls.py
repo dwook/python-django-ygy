@@ -5,8 +5,4 @@ from groups import views as group_views
 app_name = "common"
 
 
-urlpatterns = [
-    path("", views.HomeView.as_view(), name="home")
-    # path("", views.home_view, name="home"),
-    # path("home-api/", group_views.HomeApiView.as_view(), name="home-api"),
-]
+urlpatterns = [path("", views.HomeView.as_view(), name="home")]

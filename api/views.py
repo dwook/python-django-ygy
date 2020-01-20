@@ -3,11 +3,12 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.generic import View
 from django.views.generic.list import BaseListView
-from django.views.generic.edit import BaseFormView, BaseCreateView
+from django.views.generic.edit import BaseCreateView
 from django.forms import model_to_dict
 import json
 from groups.models import Group
 from restaurants.models import Restaurant
+from menus.models import Menu
 
 
 @method_decorator(ensure_csrf_cookie, name="dispatch")
@@ -33,30 +34,41 @@ class GroupsBarApi(BaseListView):
 
 @method_decorator(ensure_csrf_cookie, name="dispatch")
 class RestaurantsListApi(View):
-    def get(self, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         group_id = kwargs.get("group_id")
         restaurants = list(Restaurant.objects.filter(group=group_id).values())
-
+        # print(str(Restaurant.objects.filter(group=group_id).values().query))
         return JsonResponse(data=restaurants, safe=False)
 
 
 class SearchRestaurantsApi(View):
-    def post(self, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         name = json.loads(self.request.body).get("name")
 
         search_restaurants = Restaurant.objects.filter(name__icontains=name).union(
             Restaurant.objects.filter(menus__name__icontains=name)
         )
+        # print(str(search_restaurants.query))
         restaurants = list(search_restaurants.values())
 
         return JsonResponse(data=restaurants, safe=False)
 
 
-class ApiTodoCV(BaseCreateView):
-    model = Group
-    fields = "__all__"
+@method_decorator(ensure_csrf_cookie, name="dispatch")
+class RestaurantDetailApi(View):
+    def get(self, request, *args, **kwargs):
+        restaurant_id = kwargs.get("restaurant_id")
+        restaurant = list(Restaurant.objects.filter(id=restaurant_id).values())
+        # print(str(Restaurant.objects.filter(id=restaurant_id).values().query))
+        return JsonResponse(data=restaurant, safe=False)
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["data"] = json.loads(self.request.body)
-        return kwargs
+
+@method_decorator(ensure_csrf_cookie, name="dispatch")
+class MenusListApi(View):
+    def get(self, request, *args, **kwargs):
+        restaurant_id = kwargs.get("restaurant_id")
+        restaurant = list(Menu.objects.filter(restaurant=restaurant_id).values())
+        print(restaurant)
+        # print(str(Restaurant.objects.filter(id=restaurant_id).values().query))
+        return JsonResponse(data=restaurant, safe=False)
+

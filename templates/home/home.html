@@ -5,7 +5,7 @@
     <div class="flex flex-col items-center justify-center max-w-full h-64 my-4 bg-no-repeat bg-cover bg-center" style="background-image:url('{% static 'img/ygy_bg.jpg' %}')">
         <div>
             <span class="text-white font-bold text-4xl">"어디로</span>
-            <span class="text-yellow-400 font-bold text-4xl">배달</span>
+            <span class="text-green-300 font-bold text-4xl">배달</span>
             <span class="text-white font-bold text-4xl">해 드릴까요?"</span>
         </div>
         <span class="text-white font-bold mb-2 ">배달 받으실 동 이름은 아래와 같습니다.</span>
@@ -37,10 +37,6 @@
 
 {% block javascript %}
 <script>
-    // CSRF Token 관련하여 전역변수로 선언
-    axios.defaults.xsrfCookieName = 'csrftoken';
-    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-
     var vm = new Vue({
         delimiters: ["[[", "]]"],
         el: "#groups-list",

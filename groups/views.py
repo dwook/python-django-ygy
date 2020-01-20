@@ -4,6 +4,16 @@ from . import models
 import json
 
 
+class GroupListApiView(View):
+    def get(self, request, *args, **kwargs):
+        groups = models.Group.objects.all().values("pk", "name")
+        json_data = {
+            "groups": list(groups),
+            "group_pk": kwargs.get("group_pk"),
+        }
+        return HttpResponse(json.dumps(json_data), content_type="application/json",)
+
+
 """
 # CBV
 class HomeApiView(View):
@@ -25,14 +35,3 @@ def home_view_api(request):
     }
     return HttpResponse(json.dumps(json_data), content_type="application/json",)
 """
-
-
-class GroupListApiView(View):
-    def get(self, request, *args, **kwargs):
-        groups = models.Group.objects.all().values("pk", "name")
-        json_data = {
-            "groups": list(groups),
-            "group_pk": kwargs.get("group_pk"),
-        }
-        return HttpResponse(json.dumps(json_data), content_type="application/json",)
-

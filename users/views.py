@@ -201,6 +201,7 @@ class EditProfileView(UpdateView):
         form = super().get_form(form_class=form_class)
         form.fields["nickname"].widget.attrs = {"placeholder": "닉네임"}
         form.fields["phone"].widget.attrs = {"placeholder": "전화번호"}
+
         return form
 
     def get_success_url(self):

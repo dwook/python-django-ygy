@@ -3,4 +3,6 @@ from . import views
 
 app_name = "restaurants"
 
-urlpatterns = []
+urlpatterns = [
+    path("<int:restaurant_id>/", views.RestaurantsDetailView.as_view(), name="detail"),
+]

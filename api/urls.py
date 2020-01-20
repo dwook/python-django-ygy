@@ -17,4 +17,14 @@ urlpatterns = [
         views.SearchRestaurantsApi.as_view(),
         name="search-restaurants-api",
     ),
+    path(
+        "<int:restaurant_id>/restaurant-detail-api/",
+        views.RestaurantDetailApi.as_view(),
+        name="restaurant-detail-api",
+    ),
+    path(
+        "<int:restaurant_id>/menus-list-api/",
+        views.MenusListApi.as_view(),
+        name="menus-list-api",
+    ),
 ]

@@ -6,10 +6,10 @@ Default : https://github.com/github/gitignore/blob/master/Python.gitignore/
 
 ## Models
 
+- Api
 - Group
 - Restaurant
 - Menu
-- Review
 - Zzim
 - User
 
@@ -17,8 +17,10 @@ Default : https://github.com/github/gitignore/blob/master/Python.gitignore/
 
 - [x] Home
 - [x] Login/Logout
+- [x] Social Login(Naver, Kakao)
 - [x] Sign Up
-- [x] Profile
+- [x] Profile Edit
+- [x] Password Edit
 - [x] Restaurants List
 - [ ] Restaurants Detail
 - [ ] Restaurants Update

@@ -1,0 +1,10 @@
+{% load static %}
+
+<div class="flex flex-col items-center justify-center max-w-full h-24 mt-4 bg-no-repeat bg-cover bg-center" style="background-image:url('{% static 'img/ygy_bg.jpg' %}')">
+    <div class="flex justify-center w-full">
+        <div class="flex flex-col justify-center bg-green-500 rounded-l-lg">
+            <span class="text-center font-medium text-lg w-20 text-white">주소</span>
+        </div>
+        <input type="search" class="pl-3 h-10 w-1/4 rounded-r-lg" value="서울시 송파구 문정2동..." placeholder="건물명, 도로명, 지명으로 검색하세요." required />
+    </div>
+</div>

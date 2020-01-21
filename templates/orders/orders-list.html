@@ -1,10 +1,82 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="flex flex-wrap px-64 text pt-5 mb-3">
+    <div id="contents" class="flex flex-wrap px-64 text pt-5 mb-3">
         <h3 class="text-xl text-center mb-5 font-bold">주문표</h3>
         <div class="w-full flex flex-wrap">
-           
+            <div v-for="order in orders" class="flex border w-full border-gray-400 p-2">
+                <div class="flex w-1/2">
+                    <div v-bind:style="{'background-image': 'url(../../media/' + order.menu__photo + ')' }" class="w-32 h-32 bg-cover bg-center border border-gray-400"></div>
+                    <ul class="ml-5">
+                        <li class="h-full flex flex-col justify-between">
+                            <div class="flex flex-col">
+                                <span class="font-bold">[[order.menu__name]]</span>
+                                <span class="text-xs text-gray-500 mb-10">[[order.menu__description]]</span>
+                            </div>
+                            <div class="flex">
+                                <span>[[order.menu__price]]원 * </span>
+                                <input class="w-16 h-6 mx-2 text-center" min="1" max="99" type="number" v-model="order.count">
+                                <span>= [[order.menu__price * order.count]]원</span>
+                                <span v-on:click="edit_count(order.menu__id, order.count)" class="ml-2 bg-red-500 text-white cursor-pointer">수량 변경</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="w-1/2 text-right">
+                    <span v-on:click="delete_order(order.id)" class="bg-red-500 text-white cursor-pointer">삭제</span>
+                </div>
+            </div> 
         </div>
     </div>
-{% endblock content %} 
+{% endblock content %}
+
+{% block javascript %}
+<script>
+    // CSRF Token 관련하여 전역변수로 선언
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+    var vm = new Vue({
+        delimiters: ["[[", "]]"],
+        el: "#contents",
+        data: {
+            orders: [],
+            order_flag: "",
+            message: "",
+        },
+        created: function () {
+            console.log("created");
+            this.fetch_orders();
+        },
+        methods: {
+            fetch_orders: function () {
+                var vm = this;
+
+                axios.get("/api/order-list-api/")
+                    .then(function (res) {
+                        console.log("fetch_orders", res.data);
+                        vm.orders = res.data;
+                        
+                    })
+                    .catch(function (err) {
+                        console.log("fetch_orders error", err);
+                    })
+            },
+            edit_count: function (menu_id, count) {
+                var vm = this;
+                var postParam = {"menu_id": menu_id, "count": count};
+
+                axios.post("/api/order-count-api/", postParam)
+                    .then(function (res) {
+                        console.log("edit_count", res.data);
+                    })
+                    .catch(function (err) {
+                        console.log("edit_count error", err);
+                        alert("유효하지 않은 값입니다.")
+                    })
+            },
+        },
+    })
+</script>
+{% endblock javascript %}
+    

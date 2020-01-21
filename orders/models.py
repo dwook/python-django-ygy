@@ -10,4 +10,3 @@ class Order(common_models.TimeStampedModel):
 
     def __str__(self):
         return self.menu.name
-

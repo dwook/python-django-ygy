@@ -22,13 +22,8 @@ Default : https://github.com/github/gitignore/blob/master/Python.gitignore/
 - [x] Profile Edit
 - [x] Password Edit
 - [x] Restaurants List
-- [ ] Restaurants Detail
-- [ ] Restaurants Update
-- [ ] Restaurants Delete
-- [ ] Restaurants Create
-- [ ] Menus List
-- [ ] Menus Detail
-- [ ] Menus Update
-- [ ] Menus Delete
-- [ ] Menus Create
-- [ ] Zzim & Zzims List
+- [x] Restaurants Detail
+- [x] Menus List
+- [x] Menus Detail
+- [x] Zzim & Zzims List
+- [ ] Order & Order List

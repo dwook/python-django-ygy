@@ -35,15 +35,15 @@
 
 {% block javascript %}
 <script type="text/javascript">
-function ChangeUrl(groupId) {
-    console.log("ChangeUrl ID : " + groupId);
-    if(typeof(history.pushState) != "undefined") {
-        history.pushState(null, null, "../../groups/" + groupId + "/")
+    function ChangeUrl(groupId) {
+        console.log("ChangeUrl ID : " + groupId);
+        if(typeof(history.pushState) != "undefined") {
+            history.pushState(null, null, "../../groups/" + groupId + "/")
+        }
+        else {
+            location.href = "../../groups/" + groupId + "/";
+        }
     }
-    else {
-        location.href = "../../groups/" + groupId + "/";
-    }
-}
 </script>
 <script>
     // CSRF Token 관련하여 전역변수로 선언

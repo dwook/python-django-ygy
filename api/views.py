@@ -13,6 +13,8 @@ from users.models import User
 from orders.models import Order
 from . import models
 
+
+""" Home """
 # csrf_exempt : 임시로 CSRF 미체크
 # name="dispatch" : 이름이 dispatch인 메서드를 사용하겠다는 의미
 @method_decorator(ensure_csrf_cookie, name="dispatch")
@@ -20,6 +22,7 @@ class HomeApi(BaseListView):
     model = Group
 
     def render_to_response(self, context, **response_kwargs):
+        print(context)
         # values()는 테이블에서 가져온 레코드들을 dict형태로 만들어 줌
         groups = list(context["object_list"].values())
         # safe가 True이면 data에 dict형인 값만 가능.
@@ -47,6 +50,13 @@ class RestaurantsListApi(View):
 
 class SearchRestaurantsApi(View):
     def post(self, request, *args, **kwargs):
+        """
+        브라우져에서 POST로 받아온 값은 request.body로 들어가는데
+        request.body 안 값의 형태는 dict이지만 실제론 문자열이다(예: '{"abc" : 123}' )
+        그래서 문자열을 dict로 변환해주기 위해 json.loads 메서드를 사용한다.
+
+        반대로 dict를 문자열로 바꿔주는 함수가 있는데 json.dumps이다.
+        """
         name = json.loads(self.request.body).get("name")
 
         search_restaurants = Restaurant.objects.filter(name__icontains=name).union(
@@ -122,6 +132,7 @@ class ZzimApi(View):
 # 기존 주문표에 등록되어 있는 메뉴의 음식점명이 새로 등록된 메뉴의 음식점명과 같은지 다른지 체크
 class OrderCheckApi(View):
     def post(self, request, *args, **kwargs):
+        # 브라우져에서 받아온 값
         menu_id = json.loads(self.request.body).get("menu_id")
         menu = Menu.objects.get_or_none(id=menu_id)
         order_flag = False
@@ -152,7 +163,7 @@ class OrderAddApi(View):
         if menu is not None:
             if Order.objects.filter(menu_id=menu_id):
                 order = Order.objects.get(menu=menu)
-                order.count = order.count + 1
+                order.count += 1
                 order.save()
                 order_flag = True
             else:
@@ -163,3 +174,40 @@ class OrderAddApi(View):
 
         return JsonResponse(data={"order_flag": order_flag})
 
+
+@method_decorator(ensure_csrf_cookie, name="dispatch")
+class OrderListApi(View):
+    def get(self, request, *args, **kwargs):
+        orders = list(
+            Order.objects.all().values(
+                "menu__id",
+                "menu__name",
+                "menu__description",
+                "menu__photo",
+                "menu__price",
+                "count",
+            )
+        )
+
+        return JsonResponse(data=orders, safe=False)
+
+
+class OrderCountApi(View):
+    def post(self, request, *args, **kwargs):
+        menu_id = json.loads(self.request.body).get("menu_id")
+        count = json.loads(self.request.body).get("count")
+
+        try:
+            if type(int(count)) is int:
+
+                if int(count) < 0 or int(count) > 100:
+                    return JsonResponse(data={}, status=400)
+
+                if Order.objects.filter(menu_id=menu_id):
+                    order = Order.objects.get(menu_id=menu_id)
+                    order.count = count
+                    order.save()
+
+                    return JsonResponse(data={})
+        except ValueError:
+            return JsonResponse(data={}, status=400)

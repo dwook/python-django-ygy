@@ -30,4 +30,6 @@ urlpatterns = [
     path("zzim-api/", views.ZzimApi.as_view(), name="zzim-api",),
     path("order-check-api/", views.OrderCheckApi.as_view(), name="order-check-api",),
     path("order-add-api/", views.OrderAddApi.as_view(), name="order-add-api",),
+    path("order-list-api/", views.OrderListApi.as_view(), name="order-list-api",),
+    path("order-count-api/", views.OrderCountApi.as_view(), name="order-count-api",),
 ]

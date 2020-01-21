@@ -67,7 +67,7 @@
                     </ul>
                 </div>
                 <div class="w-1/2 text-right pt-2">
-                    <span v-on:click="add_cart(menu.id)" class="p-2 text-right bg-red-500 text-white cursor-pointer">주문표에 추가</span>
+                    <span v-on:click="add_order(menu.id)" class="p-2 text-right bg-red-500 text-white cursor-pointer">주문표에 추가</span>
                 </div>
             </div>    
         </div>
@@ -76,7 +76,6 @@
 {% endblock content %}
 
 {% block javascript %}
-
 <script>
     // CSRF Token 관련하여 전역변수로 선언
     axios.defaults.xsrfCookieName = 'csrftoken';
@@ -92,9 +91,10 @@
             payment_method: [],
             restaurants_id: "{{restaurants_id}}",
             zzim_flag: "",
+            order_flag: "",
         },
         created: function () {
-            console.log("created()");
+            console.log("created");
             this.fetch_all_groups();
             this.fetch_restaurant();
             this.fetch_menus();
@@ -110,7 +110,7 @@
                         
                     })
                     .catch(function (err) {
-                        console.log("GET ERR", err);
+                        console.log("fetch_all_groups error", err);
                     })
             },
             fetch_restaurant: function () {
@@ -124,7 +124,7 @@
                         console.log("fetch_restaurant", res.data);
                     })
                     .catch(function (err) {
-                        console.log("GET ERR", err);
+                        console.log("fetch_restaurant error", err);
                     })
             },
             fetch_menus: function () {
@@ -137,7 +137,7 @@
                         
                     })
                     .catch(function (err) {
-                        console.log("GET ERR", err);
+                        console.log("fetch_menus error", err);
                     })
             },
             add_zzim: function (restaurant_id) {
@@ -149,22 +149,41 @@
                         console.log("post res.data", res.data.zzim_flag);
                     })
                     .catch(function (err) {
-                        console.log("POST ERR", err)
+                        console.log("add_zzim error", err)
                     })
             },
-            add_cart: function (menu_id) {
-                //if (confirm("Really Zzim ?") == false) return;
+            add_order: function (menu_id) {
                 var vm = this;
                 console.log("menu_id " + menu_id);
-                axios.post("/api/cart-add-api/", {"menu_id": menu_id})
+                axios.post("/api/order-check-api/", {"menu_id": menu_id})
                     .then(function (res) {
-                        vm.zzim_flag = res.data.zzim_flag
-                        console.log("post res.data", res.data.zzim_flag);
-                        
+                        console.log("res.data.order_flag", res.data.order_flag);
+                        var delete_flag = "False";
 
+                        if (!res.data.order_flag) {
+                            if (confirm("기존 주문표가 삭제됩니다. 계속 진행하시겠습니까?") == false) {
+                                return;
+                            } else {
+                                delete_flag = "True"
+                            }
+                        }
+                        console.log("delete_flag", delete_flag);
+                        axios.post("/api/order-add-api/", {"menu_id": menu_id, "delete_flag": delete_flag})
+                            .then(function (res) {
+                                vm.order_flag = res.data.order_flag
+                                console.log("post res.data", res.data.order_flag);
+                                if (confirm("주문표에 추가되었습니다. 주문표를 보러 가시겠습니까?") == false) {
+                                    return;
+                                } else {
+                                    // 주문표로 이동
+                                }
+                            })
+                            .catch(function (err) {
+                                console.log("add_order error", err)
+                            })
                     })
                     .catch(function (err) {
-                        console.log("POST ERR", err)
+                        console.log("add_order error", err)
                     })
             },
         },

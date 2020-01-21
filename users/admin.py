@@ -15,7 +15,6 @@ class CustomUserAdmin(UserAdmin):
                     "nickname",
                     "phone",
                     "login_method",
-                    "is_owner",
                     "zzim_list",
                     "cart_list",
                 )
@@ -28,13 +27,7 @@ class CustomUserAdmin(UserAdmin):
         "nickname",
         "phone",
         "login_method",
-        "is_owner",
         "count_zzims",
     )
 
-    list_filter = ("is_owner",)
-
-    filter_horizontal = (
-        "zzim_list",
-        "cart_list",
-    )
+    filter_horizontal = ("zzim_list",)

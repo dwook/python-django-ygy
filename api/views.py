@@ -10,9 +10,11 @@ from groups.models import Group
 from restaurants.models import Restaurant
 from menus.models import Menu
 from users.models import User
+from orders.models import Order
 from . import models
 
-
+# csrf_exempt : 임시로 CSRF 미체크
+# name="dispatch" : 이름이 dispatch인 메서드를 사용하겠다는 의미
 @method_decorator(ensure_csrf_cookie, name="dispatch")
 class HomeApi(BaseListView):
     model = Group
@@ -100,6 +102,7 @@ class MenusListApi(View):
         return JsonResponse(data=restaurant, safe=False)
 
 
+# 찜 등록 또는 삭제
 class ZzimApi(View):
     def post(self, request, *args, **kwargs):
         restaurant_id = json.loads(self.request.body).get("restaurant_id")
@@ -116,16 +119,47 @@ class ZzimApi(View):
                 return JsonResponse(data={"zzim_flag": zzim_flag})
 
 
-class CartAddApi(View):
+# 기존 주문표에 등록되어 있는 메뉴의 음식점명이 새로 등록된 메뉴의 음식점명과 같은지 다른지 체크
+class OrderCheckApi(View):
     def post(self, request, *args, **kwargs):
         menu_id = json.loads(self.request.body).get("menu_id")
         menu = Menu.objects.get_or_none(id=menu_id)
-        cart_all = request.user.cart_list.all()
-        if menu is not None:
-            print(menu)
+        order_flag = False
 
-            request.user.cart_list.add(menu)
-            print(cart_all)
-            zzim_flag = True
-            return JsonResponse(data={"zzim_flag": zzim_flag})
+        if (
+            Order.objects.filter(menu__restaurant=menu.restaurant)
+            or Order.objects.count() == 0
+        ):
+            order_flag = True  # 기존 & 신규 주문한 메뉴의 음식점명이 같거나 주문표가 빈 경우
+        else:
+            order_flag = False  # 기존 & 신규 주문한 메뉴의 음식점명이 다른 경우
+
+        return JsonResponse(data={"order_flag": order_flag})
+
+
+class OrderAddApi(View):
+    def post(self, request, *args, **kwargs):
+        # 기존 & 신규 주문한 메뉴의 음식점명이 다른 경우 기존 주문표 전체 삭제
+        delete_flag = json.loads(self.request.body).get("delete_flag")
+        if delete_flag == "True":
+            print("delete_flag")
+            Order.objects.all().delete()
+        # 주문표 등록
+        menu_id = json.loads(self.request.body).get("menu_id")
+        menu = Menu.objects.get_or_none(id=menu_id)
+        order_flag = False  # 저장 성공 여부
+
+        if menu is not None:
+            if Order.objects.filter(menu_id=menu_id):
+                order = Order.objects.get(menu=menu)
+                order.count = order.count + 1
+                order.save()
+                order_flag = True
+            else:
+                order, _ = Order.objects.get_or_create(menu=menu)
+                order.count = 1
+                order.save()
+                order_flag = True
+
+        return JsonResponse(data={"order_flag": order_flag})
 

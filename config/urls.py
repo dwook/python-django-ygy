@@ -11,6 +11,7 @@ urlpatterns = [
     path("groups/", include("groups.urls", namespace="groups")),
     path("restaurants/", include("restaurants.urls", namespace="restaurants")),
     path("menus/", include("menus.urls", namespace="menus")),
+    path("orders/", include("orders.urls", namespace="orders")),
 ]
 # 로컬에서 static 또는 uploads의 파일들을 사용하기 위해 설정
 # 실제 AWS에 배포할 때는 별도로 파일 서버(S3)를 생성하고 거기에 올릴 것임

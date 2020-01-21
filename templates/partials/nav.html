@@ -3,6 +3,14 @@
         <ul class="flex items-center text-lg font-normal h-full">
             {% if user.is_authenticated %}
                 <li class="px-2 py-2 text-white">
+                    <a href="{% url 'users:zzims-list' %}">찜 목록</a>
+                </li>
+                <span class="text-white">|</span>
+                <li class="px-2 py-2 text-white">
+                    <a href="#">주문표</a>
+                </li>
+                <span class="text-white">|</span>
+                <li class="px-2 py-2 text-white">
                     <a href="{% url 'users:edit-profile' user.pk %}">내 정보</a>
                 </li>
                 <span class="text-white">|</span>

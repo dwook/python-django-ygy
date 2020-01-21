@@ -27,4 +27,6 @@ urlpatterns = [
         views.MenusListApi.as_view(),
         name="menus-list-api",
     ),
+    path("zzim-api/", views.ZzimApi.as_view(), name="zzim-api",),
+    path("cart-add-api/", views.CartAddApi.as_view(), name="cart-add-api",),
 ]

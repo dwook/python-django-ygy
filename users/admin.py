@@ -9,7 +9,17 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (
             "Custom Profile",
-            {"fields": ("email", "nickname", "phone", "login_method", "is_owner",)},
+            {
+                "fields": (
+                    "email",
+                    "nickname",
+                    "phone",
+                    "login_method",
+                    "is_owner",
+                    "zzim_list",
+                    "cart_list",
+                )
+            },
         ),
     )
 
@@ -19,6 +29,12 @@ class CustomUserAdmin(UserAdmin):
         "phone",
         "login_method",
         "is_owner",
+        "count_zzims",
     )
 
     list_filter = ("is_owner",)
+
+    filter_horizontal = (
+        "zzim_list",
+        "cart_list",
+    )

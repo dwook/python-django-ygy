@@ -3,7 +3,7 @@ import requests
 import uuid
 from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
-from django.views.generic import FormView, View, DetailView, UpdateView
+from django.views.generic import FormView, View, DetailView, UpdateView, TemplateView
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth import authenticate, login, logout
 from . import forms, models
@@ -221,3 +221,7 @@ class EditPasswordView(PasswordChangeView):
 
     def get_success_url(self):
         return self.request.user.get_absolute_url()
+
+
+class ZzimListView(TemplateView):
+    template_name = "users/zzims_list.html"

@@ -45,7 +45,6 @@ PROJECT_APPS = [
     "users.apps.UsersConfig",
     "restaurants.apps.RestaurantsConfig",
     "menus.apps.MenusConfig",
-    "zzims.apps.ZzimsConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS

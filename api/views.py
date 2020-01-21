@@ -9,6 +9,8 @@ import json
 from groups.models import Group
 from restaurants.models import Restaurant
 from menus.models import Menu
+from users.models import User
+from . import models
 
 
 @method_decorator(ensure_csrf_cookie, name="dispatch")
@@ -61,6 +63,7 @@ class RestaurantDetailApi(View):
         # print(Restaurant.objects.all().values())
         restaurant = list(
             Restaurant.objects.filter(id=restaurant_id).values(
+                "id",
                 "name",
                 "owner_comment",
                 "delivery_cost",
@@ -73,11 +76,16 @@ class RestaurantDetailApi(View):
         payment_method = list(
             Restaurant.objects.filter(id=restaurant_id).values("payment_method__name",)
         )
+        if request.user.zzim_list.filter(id=restaurant_id):
+            zzim_flag = True
+        else:
+            zzim_flag = False
+        # print(str(request.user.zzim_list.filter(id=restaurant_id).query))
         json_data = {
             "restaurant": restaurant,
             "payment_method": payment_method,
+            "zzim_flag": zzim_flag,
         }
-        # print(json_data)
         # print(str(Restaurant.objects.filter(id=restaurant_id).values().query))
         return JsonResponse(data=json_data, safe=False)
 
@@ -90,4 +98,34 @@ class MenusListApi(View):
 
         # print(str(Restaurant.objects.filter(id=restaurant_id).values().query))
         return JsonResponse(data=restaurant, safe=False)
+
+
+class ZzimApi(View):
+    def post(self, request, *args, **kwargs):
+        restaurant_id = json.loads(self.request.body).get("restaurant_id")
+        restaurant = Restaurant.objects.get_or_none(id=restaurant_id)
+
+        if restaurant is not None:
+            if request.user.zzim_list.filter(id=restaurant_id):
+                request.user.zzim_list.remove(restaurant)
+                zzim_flag = False
+                return JsonResponse(data={"zzim_flag": zzim_flag})
+            else:
+                request.user.zzim_list.add(restaurant)
+                zzim_flag = True
+                return JsonResponse(data={"zzim_flag": zzim_flag})
+
+
+class CartAddApi(View):
+    def post(self, request, *args, **kwargs):
+        menu_id = json.loads(self.request.body).get("menu_id")
+        menu = Menu.objects.get_or_none(id=menu_id)
+        cart_all = request.user.cart_list.all()
+        if menu is not None:
+            print(menu)
+
+            request.user.cart_list.add(menu)
+            print(cart_all)
+            zzim_flag = True
+            return JsonResponse(data={"zzim_flag": zzim_flag})
 

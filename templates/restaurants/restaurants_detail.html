@@ -20,19 +20,20 @@
         </div>
         
         <div v-for="rest in restaurant" class="flex flex-col px-64 py-2 mb-3">
-            <div class="border-r border-l border-t border-gray-400 p-2">
+            <div class="flex justify-between border-r border-l border-t border-gray-400 p-2">
                 <span class="font-bold">[[rest.name]]</span>
+                <span v-on:click="add_zzim(rest.id)" class="text-sm cursor-pointer text-red-600 font-bold border-b border-red-600">찜 <i v-bind:class="zzim_flag?'fas fa-heart':'far fa-heart'"></i></span>
             </div>
             <div class="flex border border-gray-400 p-2 text-sm">
                 <div v-bind:style="{'background-image': 'url(../../media/' + rest.photo + ')' }" class="w-32 h-32 bg-cover bg-center border border-gray-400"></div>
                 <ul class="ml-5 flex flex-col justify-center">
                     <li class="mb-2">
                         <span class="text-gray-500 mr-2">최소주문금액</span>
-                        <span>[[rest.minimum_amount]]</span>
+                        <span>[[rest.minimum_amount]]원</span>
                     </li>
                     <li class="mb-2">
                         <span class="text-gray-500 mr-2">배달요금</span>
-                        <span>[[rest.delivery_cost]]</span>
+                        <span>[[rest.delivery_cost]]원</span>
                     </li>
                     <li class="mb-2">
                         <span class="text-gray-500 mr-2">영업시간</span>
@@ -52,18 +53,23 @@
             <span class="font-bold ml-2">메 뉴</span>
         </div>
         <div class="flex flex-col px-64 pb-2 mb-3">
-            <ul>
-                <li v-for="menu in menus" class="flex p-2 border border-gray-400">
-                    <div v-bind:style="{'background-image': 'url(../../media/' + menu.photo + ')' }" class="text-right w-32 h-32 bg-cover bg-center border border-gray-400"></div>
-                    <div class="flex flex-col justify-between ml-5 ">
-                        <span class="font-bold mb-2">[[menu.name]]</span>
-                        <span class="text-gray-500 mb-2">[[menu.description]]</span>
-                        <span class="mb-2">[[menu.price]]</span>
-                    </div>
-                    
-                </li>
-            </ul>
-            
+            <div v-for="menu in menus" class="flex border border-gray-400 p-2">
+                <div class="flex w-1/2">
+                    <div v-bind:style="{'background-image': 'url(../../media/' + menu.photo + ')' }" class="w-32 h-32 bg-cover bg-center border border-gray-400"></div>
+                    <ul class="ml-5">
+                        <li class="h-full flex flex-col justify-between">
+                            <div class="flex flex-col">
+                                <span class="font-bold">[[menu.name]]</span>
+                                <span class="text-xs text-gray-500 mb-10">[[menu.description]]</span>
+                            </div>
+                            <span>[[menu.price]]원</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="w-1/2 text-right pt-2">
+                    <span v-on:click="add_cart(menu.id)" class="p-2 text-right bg-red-500 text-white cursor-pointer">주문표에 추가</span>
+                </div>
+            </div>    
         </div>
     </div>
 </div>
@@ -85,6 +91,7 @@
             restaurant: [],
             payment_method: [],
             restaurants_id: "{{restaurants_id}}",
+            zzim_flag: "",
         },
         created: function () {
             console.log("created()");
@@ -113,6 +120,7 @@
                     .then(function (res) {
                         vm.restaurant = res.data.restaurant;
                         vm.payment_method = res.data.payment_method;
+                        vm.zzim_flag = res.data.zzim_flag;
                         console.log("fetch_restaurant", res.data);
                     })
                     .catch(function (err) {
@@ -130,6 +138,33 @@
                     })
                     .catch(function (err) {
                         console.log("GET ERR", err);
+                    })
+            },
+            add_zzim: function (restaurant_id) {
+                var vm = this;
+                console.log("zzim " + restaurant_id);
+                axios.post("/api/zzim-api/", {"restaurant_id": restaurant_id})
+                    .then(function (res) {
+                        vm.zzim_flag = res.data.zzim_flag
+                        console.log("post res.data", res.data.zzim_flag);
+                    })
+                    .catch(function (err) {
+                        console.log("POST ERR", err)
+                    })
+            },
+            add_cart: function (menu_id) {
+                //if (confirm("Really Zzim ?") == false) return;
+                var vm = this;
+                console.log("menu_id " + menu_id);
+                axios.post("/api/cart-add-api/", {"menu_id": menu_id})
+                    .then(function (res) {
+                        vm.zzim_flag = res.data.zzim_flag
+                        console.log("post res.data", res.data.zzim_flag);
+                        
+
+                    })
+                    .catch(function (err) {
+                        console.log("POST ERR", err)
                     })
             },
         },

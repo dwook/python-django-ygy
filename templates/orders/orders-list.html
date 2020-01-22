@@ -14,16 +14,18 @@
                                 <span class="text-xs text-gray-500 mb-10">[[order.menu__description]]</span>
                             </div>
                             <div class="flex">
-                                <span>[[order.menu__price]]원 * </span>
-                                <input class="w-16 h-6 mx-2 text-center" min="1" max="99" type="number" v-model="order.count">
-                                <span>= [[order.menu__price * order.count]]원</span>
+                                <span class="mr-2">[[order.menu__price]]원 X </span>
+                                <div><i class="far fa-minus-square" v-on:click="order.count --"></i></div>
+                                <div class="font-bold"><span class="m-2">[[order.count]]</span></div>
+                                <div><i class="far fa-plus-square" v-on:click="order.count ++"></i></div>
+                                <span class="ml-2">= [[order.menu__price * order.count]]원</span>
                                 <span v-on:click="edit_count(order.menu__id, order.count)" class="ml-2 bg-red-500 text-white cursor-pointer">수량 변경</span>
                             </div>
                         </li>
                     </ul>
                 </div>
                 <div class="w-1/2 text-right">
-                    <span v-on:click="delete_order(order.id)" class="bg-red-500 text-white cursor-pointer">삭제</span>
+                    <span v-on:click="delete_order(order.menu__id)" class="bg-red-500 text-white cursor-pointer">삭제</span>
                 </div>
             </div> 
         </div>
@@ -40,6 +42,7 @@
         delimiters: ["[[", "]]"],
         el: "#contents",
         data: {
+            menu_id: "",
             orders: [],
             order_flag: "",
             message: "",
@@ -72,6 +75,19 @@
                     })
                     .catch(function (err) {
                         console.log("edit_count error", err);
+                        alert("유효하지 않은 값입니다.")
+                    })
+            },
+            delete_order: function (menu_id) {
+                var vm = this;
+
+                axios.delete("/api/order-delete-api/" + menu_id + "/")
+                    .then(function (res) {
+                        console.log("delete_order", res.data);
+                        vm.orders = res.data;
+                    })
+                    .catch(function (err) {
+                        console.log("delete_order error", err);
                         alert("유효하지 않은 값입니다.")
                     })
             },

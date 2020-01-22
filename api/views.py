@@ -22,7 +22,6 @@ class HomeApi(BaseListView):
     model = Group
 
     def render_to_response(self, context, **response_kwargs):
-        print(context)
         # values()는 테이블에서 가져온 레코드들을 dict형태로 만들어 줌
         groups = list(context["object_list"].values())
         # safe가 True이면 data에 dict형인 값만 가능.
@@ -167,6 +166,8 @@ class OrderAddApi(View):
                 order.save()
                 order_flag = True
             else:
+                # get_or_create로 그냥 값을 받으면 tuple로 값을 받아오기 때문에(예: (order, True))
+                # 따로 변수를 만들어 값을 받아옴. 두 번째 값은 필요없어서 _ 로 무시
                 order, _ = Order.objects.get_or_create(menu=menu)
                 order.count = 1
                 order.save()
@@ -200,7 +201,7 @@ class OrderCountApi(View):
         try:
             if type(int(count)) is int:
 
-                if int(count) < 0 or int(count) > 100:
+                if int(count) < 1 or int(count) > 100:
                     return JsonResponse(data={}, status=400)
 
                 if Order.objects.filter(menu_id=menu_id):
@@ -211,3 +212,43 @@ class OrderCountApi(View):
                     return JsonResponse(data={})
         except ValueError:
             return JsonResponse(data={}, status=400)
+
+
+class OrderCountApi(View):
+    def post(self, request, *args, **kwargs):
+        menu_id = json.loads(self.request.body).get("menu_id")
+        count = json.loads(self.request.body).get("count")
+
+        try:
+            if type(int(count)) is int:
+
+                if int(count) < 1 or int(count) > 100:
+                    return JsonResponse(data={}, status=400)
+
+                if Order.objects.filter(menu_id=menu_id):
+                    order = Order.objects.get(menu_id=menu_id)
+                    order.count = count
+                    order.save()
+
+                    return JsonResponse(data={})
+        except ValueError:
+            return JsonResponse(data={}, status=400)
+
+
+class OrderDeleteApi(View):
+    def delete(self, request, *args, **kwargs):
+        menu_id = kwargs.get("menu_id")
+        Order.objects.get(menu_id=menu_id).delete()
+
+        orders = list(
+            Order.objects.all().values(
+                "menu__id",
+                "menu__name",
+                "menu__description",
+                "menu__photo",
+                "menu__price",
+                "count",
+            )
+        )
+
+        return JsonResponse(data=orders, safe=False)

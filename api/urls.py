@@ -32,4 +32,9 @@ urlpatterns = [
     path("order-add-api/", views.OrderAddApi.as_view(), name="order-add-api",),
     path("order-list-api/", views.OrderListApi.as_view(), name="order-list-api",),
     path("order-count-api/", views.OrderCountApi.as_view(), name="order-count-api",),
+    path(
+        "order-delete-api/<int:menu_id>/",
+        views.OrderDeleteApi.as_view(),
+        name="order-delete-api",
+    ),
 ]

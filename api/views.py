@@ -3,16 +3,11 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.generic import View
 from django.views.generic.list import BaseListView
-from django.views.generic.edit import BaseCreateView
-from django.forms import model_to_dict
 import json
 from groups.models import Group
 from restaurants.models import Restaurant
 from menus.models import Menu
-from users.models import User
 from orders.models import Order
-from . import models
-
 
 """ Home """
 # csrf_exempt : 임시로 CSRF 미체크
@@ -22,7 +17,7 @@ class HomeApi(BaseListView):
     model = Group
 
     def render_to_response(self, context, **response_kwargs):
-        # values()는 테이블에서 가져온 레코드들을 dict형태로 만들어 줌
+        # values()는 테이블에서 가져온 각 레코드들을 각각의 컬럼별로 나누어 dict형태로 만들어 줌
         groups = list(context["object_list"].values())
         # safe가 True이면 data에 dict형인 값만 가능.
         # 여기서는 list형태로 데이터를 응답해서 보내주기 때문에 False
@@ -134,16 +129,34 @@ class OrderCheckApi(View):
         # 브라우져에서 받아온 값
         menu_id = json.loads(self.request.body).get("menu_id")
         menu = Menu.objects.get_or_none(id=menu_id)
+
         order_flag = False
 
+        # print(dir(request.user))
+        # print(request.user.id)
+        # print(request.user)
+        # user = User.objects.get(id=request.user.id)
+        # print(type(menu))
+        # print(type(user))
+
         if (
-            Order.objects.filter(menu__restaurant=menu.restaurant)
-            or Order.objects.count() == 0
+            # request.user로 값을 넣는데 request.user.id랑 같게 값이 들어가네?
+            # 알아서 변환해주는듯..
+            Order.objects.filter(name=request.user, menu__restaurant=menu.restaurant)
+            or Order.objects.filter(name=request.user).count() == 0
         ):
             order_flag = True  # 기존 & 신규 주문한 메뉴의 음식점명이 같거나 주문표가 빈 경우
         else:
             order_flag = False  # 기존 & 신규 주문한 메뉴의 음식점명이 다른 경우
-
+        """
+        print(
+            str(
+                Order.objects.filter(
+                    name=request.user, menu__restaurant=menu.restaurant
+                ).query
+            )
+        )
+        """
         return JsonResponse(data={"order_flag": order_flag})
 
 
@@ -153,22 +166,22 @@ class OrderAddApi(View):
         delete_flag = json.loads(self.request.body).get("delete_flag")
         if delete_flag == "True":
             print("delete_flag")
-            Order.objects.all().delete()
+            Order.objects.get(name=request.user).delete()
         # 주문표 등록
         menu_id = json.loads(self.request.body).get("menu_id")
         menu = Menu.objects.get_or_none(id=menu_id)
         order_flag = False  # 저장 성공 여부
 
         if menu is not None:
-            if Order.objects.filter(menu_id=menu_id):
-                order = Order.objects.get(menu=menu)
+            if Order.objects.filter(name=request.user, menu=menu):
+                order = Order.objects.get(name=request.user, menu=menu)
                 order.count += 1
                 order.save()
                 order_flag = True
             else:
                 # get_or_create로 그냥 값을 받으면 tuple로 값을 받아오기 때문에(예: (order, True))
-                # 따로 변수를 만들어 값을 받아옴. 두 번째 값은 필요없어서 _ 로 무시
-                order, _ = Order.objects.get_or_create(menu=menu)
+                # 따로 따로 변수를 만들어 값을 받아옴. 두 번째 값은 필요없어서 _ 로 무시
+                order, _ = Order.objects.get_or_create(name=request.user, menu=menu)
                 order.count = 1
                 order.save()
                 order_flag = True
@@ -180,17 +193,49 @@ class OrderAddApi(View):
 class OrderListApi(View):
     def get(self, request, *args, **kwargs):
         orders = list(
-            Order.objects.all().values(
+            Order.objects.filter(name=request.user).values(
                 "menu__id",
                 "menu__name",
                 "menu__description",
                 "menu__photo",
                 "menu__price",
                 "count",
+                "menu__restaurant__delivery_cost",
             )
         )
+        """
+        print(
+            str(
+                Order.objects.filter(name=request.user)
+                .values(
+                    "menu__id",
+                    "menu__name",
+                    "menu__description",
+                    "menu__photo",
+                    "menu__price",
+                    "count",
+                    "menu__restaurant__delivery_cost",
+                )
+                .query
+            )
+        )
+        """
+        total_price = 0
+        delivery_cost = 0
 
-        return JsonResponse(data=orders, safe=False)
+        if len(orders):
+            for order in orders:
+                total_price += order.get("menu__price") * order.get("count")
+
+            delivery_cost = orders[0].get("menu__restaurant__delivery_cost")
+
+        json_data = {
+            "orders": orders,
+            "total_price": total_price + delivery_cost,
+            "delivery_cost": delivery_cost,
+        }
+
+        return JsonResponse(data=json_data, safe=False)
 
 
 class OrderCountApi(View):
@@ -202,35 +247,66 @@ class OrderCountApi(View):
             if type(int(count)) is int:
 
                 if int(count) < 1 or int(count) > 100:
-                    return JsonResponse(data={}, status=400)
+                    orders = list(
+                        Order.objects.filter(name=request.user).values(
+                            "menu__id",
+                            "menu__name",
+                            "menu__description",
+                            "menu__photo",
+                            "menu__price",
+                            "count",
+                            "menu__restaurant__delivery_cost",
+                        )
+                    )
 
-                if Order.objects.filter(menu_id=menu_id):
-                    order = Order.objects.get(menu_id=menu_id)
+                    total_price = 0
+                    delivery_cost = 0
+
+                    for order in orders:
+                        total_price += order.get("menu__price") * order.get("count")
+
+                    delivery_cost = orders[0].get("menu__restaurant__delivery_cost")
+
+                    json_data = {
+                        "orders": orders,
+                        "total_price": total_price + delivery_cost,
+                        "delivery_cost": delivery_cost,
+                    }
+
+                    return JsonResponse(data=json_data, safe=False)
+
+                if Order.objects.filter(name=request.user, menu_id=menu_id):
+                    order = Order.objects.get(name=request.user, menu_id=menu_id)
                     order.count = count
                     order.save()
 
-                    return JsonResponse(data={})
-        except ValueError:
-            return JsonResponse(data={}, status=400)
+                    orders = list(
+                        Order.objects.filter(name=request.user).values(
+                            "menu__id",
+                            "menu__name",
+                            "menu__description",
+                            "menu__photo",
+                            "menu__price",
+                            "count",
+                            "menu__restaurant__delivery_cost",
+                        )
+                    )
 
+                    total_price = 0
+                    delivery_cost = 0
 
-class OrderCountApi(View):
-    def post(self, request, *args, **kwargs):
-        menu_id = json.loads(self.request.body).get("menu_id")
-        count = json.loads(self.request.body).get("count")
+                    for order in orders:
+                        total_price += order.get("menu__price") * order.get("count")
 
-        try:
-            if type(int(count)) is int:
+                    delivery_cost = orders[0].get("menu__restaurant__delivery_cost")
 
-                if int(count) < 1 or int(count) > 100:
-                    return JsonResponse(data={}, status=400)
+                    json_data = {
+                        "orders": orders,
+                        "total_price": total_price + delivery_cost,
+                        "delivery_cost": delivery_cost,
+                    }
 
-                if Order.objects.filter(menu_id=menu_id):
-                    order = Order.objects.get(menu_id=menu_id)
-                    order.count = count
-                    order.save()
-
-                    return JsonResponse(data={})
+                    return JsonResponse(data=json_data, safe=False)
         except ValueError:
             return JsonResponse(data={}, status=400)
 
@@ -238,10 +314,44 @@ class OrderCountApi(View):
 class OrderDeleteApi(View):
     def delete(self, request, *args, **kwargs):
         menu_id = kwargs.get("menu_id")
-        Order.objects.get(menu_id=menu_id).delete()
+        Order.objects.get(name=request.user, menu_id=menu_id).delete()
 
         orders = list(
-            Order.objects.all().values(
+            Order.objects.filter(name=request.user).values(
+                "menu__id",
+                "menu__name",
+                "menu__description",
+                "menu__photo",
+                "menu__price",
+                "count",
+                "menu__restaurant__delivery_cost",
+            )
+        )
+
+        total_price = 0
+        delivery_cost = 0
+
+        if len(orders):
+            for order in orders:
+                total_price += order.get("menu__price") * order.get("count")
+
+            delivery_cost = orders[0].get("menu__restaurant__delivery_cost")
+
+        json_data = {
+            "orders": orders,
+            "total_price": total_price + delivery_cost,
+            "delivery_cost": delivery_cost,
+        }
+
+        return JsonResponse(data=json_data, safe=False)
+
+
+class OrderDeleteAllApi(View):
+    def delete(self, request, *args, **kwargs):
+        Order.objects.filter(name=request.user).delete()
+
+        orders = list(
+            Order.objects.filter(name=request.user).values(
                 "menu__id",
                 "menu__name",
                 "menu__description",
@@ -251,4 +361,11 @@ class OrderDeleteApi(View):
             )
         )
 
-        return JsonResponse(data=orders, safe=False)
+        json_data = {
+            "orders": orders,
+            "total_price": 0,
+            "delivery_cost": 0,
+        }
+
+        return JsonResponse(data=json_data, safe=False)
+

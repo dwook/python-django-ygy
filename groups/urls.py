@@ -1,5 +1,4 @@
 from django.urls import path
-from . import views
 from restaurants import views as restaurant_views
 
 app_name = "groups"

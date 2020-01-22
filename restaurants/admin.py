@@ -9,12 +9,12 @@ class RestaurantAdmin(admin.ModelAdmin):
     list_display = (
         "__str__",
         "owner",
-        "owner_comment",
         "delivery_cost",
         "minimum_amount",
         "start_time",
         "end_time",
         "get_thumbnail",
+        "owner_comment",
     )
 
     def get_thumbnail(self, obj):

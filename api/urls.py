@@ -37,4 +37,9 @@ urlpatterns = [
         views.OrderDeleteApi.as_view(),
         name="order-delete-api",
     ),
+    path(
+        "order-delete-all-api/",
+        views.OrderDeleteAllApi.as_view(),
+        name="order-delete-all-api",
+    ),
 ]

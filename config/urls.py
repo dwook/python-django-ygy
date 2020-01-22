@@ -10,7 +10,6 @@ urlpatterns = [
     path("users/", include("users.urls", namespace="users")),
     path("groups/", include("groups.urls", namespace="groups")),
     path("restaurants/", include("restaurants.urls", namespace="restaurants")),
-    path("menus/", include("menus.urls", namespace="menus")),
     path("orders/", include("orders.urls", namespace="orders")),
 ]
 # 로컬에서 static 또는 uploads의 파일들을 사용하기 위해 설정

@@ -4,26 +4,17 @@
 
 Default : https://github.com/github/gitignore/blob/master/Python.gitignore/
 
-## Models
-
-- Api
-- Group
-- Restaurant
-- Menu
-- Zzim
-- User
-
 ## Templates
 
 - [x] Home
 - [x] Login/Logout
 - [x] Social Login(Naver, Kakao)
 - [x] Sign Up
-- [x] Profile Edit
-- [x] Password Edit
-- [x] Restaurants List
-- [x] Restaurants Detail
-- [x] Menus List
-- [x] Menus Detail
-- [x] Zzim & Zzims List
-- [ ] Order & Order List
+- [x] Profile
+- [x] Password
+- [x] Restaurants
+- [x] Menus
+- [x] Zzims
+- [x] Orders
+- [x] Mixins(보안)
+- [ ] 현재위치, 그룹바 표시

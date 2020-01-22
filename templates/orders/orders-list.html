@@ -1,9 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div id="contents" class="flex flex-wrap px-64 text pt-5 mb-3">
-        <h3 class="text-xl text-center mb-5 font-bold">주문표</h3>
-        <div class="w-full flex flex-wrap">
+    <div id="contents" class="flex flex-wrap px-64 pt-5 mb-3">
+        <div class="w-full flex justify-between mb-5">
+            <span class="text-xl font-bold">주문표</span>
+            <div v-if="total_price != 0" class="ml-5"><i class="far fa-trash-alt fa-2x pr-2 cursor-pointer" v-on:click="delete_all_orders()"></i></div>
+        </div>
+        <div v-if="total_price == 0">
+            목록이 없습니다.
+        </div>
+        <div class="w-full flex flex-wrap mb-5">
             <div v-for="order in orders" class="flex border w-full border-gray-400 p-2">
                 <div class="flex w-1/2">
                     <div v-bind:style="{'background-image': 'url(../../media/' + order.menu__photo + ')' }" class="w-32 h-32 bg-cover bg-center border border-gray-400"></div>
@@ -15,19 +21,32 @@
                             </div>
                             <div class="flex">
                                 <span class="mr-2">[[order.menu__price]]원 X </span>
-                                <div><i class="far fa-minus-square" v-on:click="order.count --"></i></div>
+                                <div><i class="far fa-minus-square cursor-pointer" v-on:click="order.count --, edit_count(order.menu__id, order.count)"></i></div>
                                 <div class="font-bold"><span class="m-2">[[order.count]]</span></div>
-                                <div><i class="far fa-plus-square" v-on:click="order.count ++"></i></div>
+                                <div><i class="far fa-plus-square cursor-pointer" v-on:click="order.count ++, edit_count(order.menu__id, order.count)"></i></div>
                                 <span class="ml-2">= [[order.menu__price * order.count]]원</span>
-                                <span v-on:click="edit_count(order.menu__id, order.count)" class="ml-2 bg-red-500 text-white cursor-pointer">수량 변경</span>
+                                <!-- <div><span v-on:click="" class="text-xs ml-2 bg-red-500 text-white cursor-pointer rounded-sm">수량 변경</span></div> -->
                             </div>
                         </li>
                     </ul>
                 </div>
-                <div class="w-1/2 text-right">
-                    <span v-on:click="delete_order(order.menu__id)" class="bg-red-500 text-white cursor-pointer">삭제</span>
+                <div class="w-1/2 text-right h-10 mt-1">
+                    <span v-on:click="delete_order(order.menu__id)" class="rounded-sm bg-red-500 text-white cursor-pointer p-1">삭제</span>
                 </div>
-            </div> 
+            </div>
+        </div>
+        <div v-if="delivery_cost != 0" class="w-full flex justify-between">
+            <div class="flex border w-full border-gray-400 p-2">
+                <span class="">배달요금 : [[delivery_cost]]원</span>
+            </div>
+        </div>
+        <div v-if="total_price != 0" class="w-full flex justify-between mb-3">
+            <div class="flex border w-full border-gray-400 p-2">
+                <span class="">합계 : [[total_price]]원</span>
+            </div>
+        </div>
+        <div v-if="total_price != 0" class="w-full flex justify-center">
+            <div class="bg-red-500 text-white p-2 rounded-sm font-bold cursor-pointer" v-on:click="alert('진짜 결제하려고요? 다음에 현금으로 주세요 ^^b')">주문하기</div>
         </div>
     </div>
 {% endblock content %}
@@ -46,6 +65,8 @@
             orders: [],
             order_flag: "",
             message: "",
+            total_price: "",
+            delivery_cost: "",
         },
         created: function () {
             console.log("created");
@@ -58,8 +79,9 @@
                 axios.get("/api/order-list-api/")
                     .then(function (res) {
                         console.log("fetch_orders", res.data);
-                        vm.orders = res.data;
-                        
+                        vm.orders = res.data.orders;
+                        vm.total_price = res.data.total_price;
+                        vm.delivery_cost = res.data.delivery_cost;
                     })
                     .catch(function (err) {
                         console.log("fetch_orders error", err);
@@ -72,9 +94,13 @@
                 axios.post("/api/order-count-api/", postParam)
                     .then(function (res) {
                         console.log("edit_count", res.data);
+                        vm.orders = res.data.orders;
+                        vm.total_price = res.data.total_price;
+                        vm.delivery_cost = res.data.delivery_cost;
                     })
                     .catch(function (err) {
                         console.log("edit_count error", err);
+                        //vm.orders = res.data;
                         alert("유효하지 않은 값입니다.")
                     })
             },
@@ -84,10 +110,27 @@
                 axios.delete("/api/order-delete-api/" + menu_id + "/")
                     .then(function (res) {
                         console.log("delete_order", res.data);
-                        vm.orders = res.data;
+                        vm.orders = res.data.orders;
+                        vm.total_price = res.data.total_price;
+                        vm.delivery_cost = res.data.delivery_cost;
                     })
                     .catch(function (err) {
                         console.log("delete_order error", err);
+                        alert("유효하지 않은 값입니다.")
+                    })
+            },
+            delete_all_orders: function () {
+                var vm = this;
+
+                axios.delete("/api/order-delete-all-api/")
+                    .then(function (res) {
+                        console.log("delete_all_orders", res.data);
+                        vm.orders = res.data.orders;
+                        vm.total_price = res.data.total_price;
+                        vm.delivery_cost = res.data.delivery_cost;
+                    })
+                    .catch(function (err) {
+                        console.log("delete_all_orders error", err);
                         alert("유효하지 않은 값입니다.")
                     })
             },

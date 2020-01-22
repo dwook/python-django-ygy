@@ -9,16 +9,7 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (
             "Custom Profile",
-            {
-                "fields": (
-                    "email",
-                    "nickname",
-                    "phone",
-                    "login_method",
-                    "zzim_list",
-                    "cart_list",
-                )
-            },
+            {"fields": ("email", "nickname", "phone", "login_method", "zzim_list",)},
         ),
     )
 

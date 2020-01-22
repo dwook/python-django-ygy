@@ -3,17 +3,18 @@ import requests
 import uuid
 from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
-from django.views.generic import FormView, View, DetailView, UpdateView, TemplateView
+from django.views.generic import FormView, UpdateView, TemplateView
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth import authenticate, login, logout
 from . import forms, models
+from users.mixins import LoggedInOnlyView, LoggedOutOnlyView, EmailLoginOnlyView
 
-# FormView는 CBV
-class LoginView(FormView):
+
+class LoginView(LoggedOutOnlyView, FormView):
     template_name = "users/login.html"
     form_class = forms.LoginForm
     # reverse_lazy는 View를 호출했을 때, 바로가 아닌 필요할 때(이 경우는 성공했을 때) 실행되도록 함
-    success_url = reverse_lazy("common:home")
+    # success_url = reverse_lazy("common:home")
     # form_valid는 FormView의 메서드 중 하나로 form.is_valid()를 대체하는 것으로 보면 된다.
     def form_valid(self, form):
         email = form.cleaned_data.get("email")
@@ -23,8 +24,15 @@ class LoginView(FormView):
             login(self.request, user)
         return super().form_valid(form)
 
+    def get_success_url(self):
+        next_page = self.request.GET.get("next")
+        if next_page is not None:
+            return next_page
+        else:
+            return reverse("common:home")
 
-class SignUpView(FormView):
+
+class SignUpView(LoggedOutOnlyView, FormView):
     template_name = "users/signup.html"
     form_class = forms.SignUpForm
     success_url = reverse_lazy("common:home")
@@ -192,7 +200,7 @@ def kakao_callback(request):
         return redirect(reverse("users:login"))
 
 
-class EditProfileView(UpdateView):
+class EditProfileView(LoggedInOnlyView, UpdateView):
     template_name = "users/edit_profile.html"
     model = models.User
     fields = ("nickname", "phone")
@@ -208,7 +216,7 @@ class EditProfileView(UpdateView):
         return self.request.user.get_absolute_url()
 
 
-class EditPasswordView(PasswordChangeView):
+class EditPasswordView(LoggedInOnlyView, EmailLoginOnlyView, PasswordChangeView):
 
     template_name = "users/edit_password.html"
 
@@ -223,5 +231,5 @@ class EditPasswordView(PasswordChangeView):
         return self.request.user.get_absolute_url()
 
 
-class ZzimListView(TemplateView):
+class ZzimListView(LoggedInOnlyView, TemplateView):
     template_name = "users/zzims_list.html"

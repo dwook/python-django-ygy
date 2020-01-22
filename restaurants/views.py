@@ -1,11 +1,10 @@
 from django.views.generic import View
-from django.http import JsonResponse
 from django.shortcuts import render
-from . import models, forms
-import json
+
+from users.mixins import LoggedInOnlyView
 
 
-class RestaurantView(View):
+class RestaurantView(LoggedInOnlyView, View):
     def get(self, request, *args, **kwargs):
         group_id = kwargs.get("group_id")
 
@@ -14,7 +13,7 @@ class RestaurantView(View):
         )
 
 
-class RestaurantsDetailView(View):
+class RestaurantsDetailView(LoggedInOnlyView, View):
     def get(self, request, *args, **kwargs):
         restaurant_id = kwargs.get("restaurant_id")
 

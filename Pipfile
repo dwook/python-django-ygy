@@ -17,6 +17,7 @@ django-dotenv = "*"
 psycopg2 = "*"
 django-storages = "*"
 boto3 = "*"
+awsebcli = "*"
 
 [requires]
 python_version = "3.7"

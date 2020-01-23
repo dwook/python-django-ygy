@@ -20,7 +20,7 @@
     <div class="flex flex-wrap px-64 text" id="groups-list">
         <div v-for="group in groups" class="w-1/4 mb-2 px-2 overflow-hidden">
             <a v-if="group.id == 1" href="../../#">
-                <div v-bind:style="{'background-image': 'url(../../' + group.photo + ')' }" class="w-full h-56 bg-cover bg-center rounded-lg mb-2 border border-gray-400">
+                <div v-bind:style="{'background-image': 'url(media/' + group.photo + ')' }" class="w-full h-56 bg-cover bg-center rounded-lg mb-2 border border-gray-400">
                     <span v-if="group.id == 1" class="text-black mt-4 ml-4 font-bold block truncate"></span>
                     <span v-else class="text-black mt-4 ml-4 font-bold block truncate">[[group.name]]</span>
                 </div>

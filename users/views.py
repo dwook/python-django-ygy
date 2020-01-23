@@ -66,7 +66,7 @@ def naver_login(request):
         redirect_uri = "http://127.0.0.1:8000/users/login/naver/callback"
     else:
         client_id = os.environ.get("AWS_NAVER_ID")
-        redirect_uri = "http://python-django.e9mpapu2ez.ap-northeast-2.elasticbeanstalk.com/users/login/naver/callback"
+        redirect_uri = "http://yogiyo-clone.7k63qgizbq.ap-northeast-2.elasticbeanstalk.com/users/login/naver/callback"
     # crsf 방지를 위해 uuid로 state(상태 토큰값) 생성
     state = uuid.uuid4().hex[:20]
     # 네이버 ID로 로그인 인증 요청 API
@@ -137,7 +137,7 @@ def kakao_login(request):
     if os.environ.get("DEBUG"):
         redirect_uri = "http://127.0.0.1:8000/users/login/kakao/callback"
     else:
-        redirect_uri = "http://python-django.e9mpapu2ez.ap-northeast-2.elasticbeanstalk.com/users/login/kakao/callback"
+        redirect_uri = "http://yogiyo-clone.7k63qgizbq.ap-northeast-2.elasticbeanstalk.com/users/login/kakao/callback"
         # 카카오 ID로 로그인 인증 요청 API
     return redirect(
         f"https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
@@ -154,7 +154,7 @@ def kakao_callback(request):
         if os.environ.get("DEBUG"):
             redirect_uri = "http://127.0.0.1:8000/users/login/kakao/callback"
         else:
-            redirect_uri = "http://python-django.e9mpapu2ez.ap-northeast-2.elasticbeanstalk.com/users/login/kakao/callback"
+            redirect_uri = "http://yogiyo-clone.7k63qgizbq.ap-northeast-2.elasticbeanstalk.com/users/login/kakao/callback"
         # code : 로그인 인증 요청 API 호출이 성공하면 리턴받는 인증 코드값
         code = request.GET.get("code")
         # 접근 토큰 발급 API(출력 포맷은 json)

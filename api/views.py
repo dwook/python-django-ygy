@@ -19,6 +19,8 @@ class HomeApi(BaseListView):
     def render_to_response(self, context, **response_kwargs):
         # values()는 테이블에서 가져온 각 레코드들을 각각의 컬럼별로 나누어 dict형태로 만들어 줌
         groups = list(context["object_list"].values())
+        #for group in context["object_list"]:
+        #    print(group.photo.url)
         # safe가 True이면 data에 dict형인 값만 가능.
         # 여기서는 list형태로 데이터를 응답해서 보내주기 때문에 False
         return JsonResponse(data=groups, safe=False)

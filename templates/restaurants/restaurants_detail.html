@@ -7,18 +7,17 @@
         <div class="flex px-64 py-2 mb-3 border-b border-gray-500 shadow-md">
             <ul class="flex justify-between items-center w-2/3">
                 <li v-for="group in groups" v-if="group.id != 1">
-                    <div class="border-b-2 border-white hover:border-black">
+                    <div class="border-b-2 hover:border-black" v-bind:class="previous_page == group.id?'border-black':'border-white'">
                         <a v-bind:href="'../../groups/' + group.id" class="px-2">
                             <span class="text-black cursor-pointer">[[group.name]]</span>
                         </a>
                     </div>
                 </li>
             </ul>
-            <div class="flex justify-end w-1/3 h-full">
+            <div class="flex justify-end w-1/3 h-full" v-on:click="previous_page()">
                 <input class="p-0 pl-2 w-3/4 h-8 text-sm" type="text" placeholder="음식점 또는 메뉴로 검색" disabled/>
             </div>
         </div>
-        
         <div v-for="rest in restaurant" class="flex flex-col px-64 py-2 mb-3">
             <div class="flex justify-between border-r border-l border-t border-gray-400 p-2">
                 <span class="font-bold">[[rest.name]]</span>
@@ -77,10 +76,6 @@
 
 {% block javascript %}
 <script>
-    // CSRF Token 관련하여 전역변수로 선언
-    axios.defaults.xsrfCookieName = 'csrftoken';
-    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-
     var vm = new Vue({
         delimiters: ["[[", "]]"],
         el: "#contents",
@@ -89,13 +84,14 @@
             menus: [],
             restaurant: [],
             payment_method: [],
-            restaurants_id: "{{restaurants_id}}",
             zzim_flag: "",
             order_flag: "",
+            previous_page: "",
         },
         created: function () {
             console.log("created");
             this.fetch_all_groups();
+            this.fetch_previous_page();
             this.fetch_restaurant();
             this.fetch_menus();
         },
@@ -112,6 +108,14 @@
                     .catch(function (err) {
                         console.log("fetch_all_groups error", err);
                     })
+            },
+            fetch_previous_page: function () {
+                var vm = this;
+                
+                console.log("document.referrer", document.referrer);
+                vm.previous_page = document.referrer.substr(-2, 1);
+                console.log("vm.previous_page", vm.previous_page);
+                
             },
             fetch_restaurant: function () {
                 var vm = this;

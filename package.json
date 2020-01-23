@@ -1,7 +1,6 @@
 {
   "name": "python-django-ygy",
   "version": "1.0.0",
-  "description": "Default : https://github.com/github/gitignore/blob/master/Python.gitignore/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wooyaPark/python-django-ygy.git"

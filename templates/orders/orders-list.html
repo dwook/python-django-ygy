@@ -46,17 +46,13 @@
             </div>
         </div>
         <div v-if="total_price != 0" class="w-full flex justify-center">
-            <div class="bg-red-500 text-white p-2 rounded-sm font-bold cursor-pointer" v-on:click="alert('진짜 결제하려고요? 다음에 현금으로 주세요 ^^b')">주문하기</div>
+            <div class="bg-red-500 text-white p-2 rounded-sm font-bold cursor-pointer" v-on:click="alert('진짜 결제하시려고요? 다음에 현금으로 주세요 ^^b')">주문하기</div>
         </div>
     </div>
 {% endblock content %}
 
 {% block javascript %}
 <script>
-    // CSRF Token 관련하여 전역변수로 선언
-    axios.defaults.xsrfCookieName = 'csrftoken';
-    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-
     var vm = new Vue({
         delimiters: ["[[", "]]"],
         el: "#contents",

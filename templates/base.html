@@ -30,7 +30,11 @@
     
     <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
+    <script>
+        // CSRF Token 관련하여 전역변수로 선언
+        axios.defaults.xsrfCookieName = 'csrftoken';
+        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+    </script>
     {% block javascript %}
     
     {% endblock javascript%}

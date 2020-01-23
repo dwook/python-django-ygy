@@ -22,3 +22,5 @@ requests==2.22.0
 sqlparse==0.3.0
 urllib3==1.25.7
 psycopg2==2.8.4
+django-storages==1.8
+boto3==1.10.47

@@ -9,6 +9,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         if User.objects.filter(username="djadmin"):
+            User.objects.create_superuser(
+                "djadmin", "park.awstudy@gmail.com", "djadmin"
+            )
             self.stdout.write(self.style.SUCCESS(f"Superuser Exists"))
         else:
             User.objects.create_superuser(

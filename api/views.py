@@ -237,7 +237,7 @@ class OrderAddApi(View):
 @method_decorator(ensure_csrf_cookie, name="dispatch")
 class OrderListApi(View):
     def get(self, request, *args, **kwargs):
-        orders_list = Order.objects.filter(name=request.user)
+        orders_list = Order.objects.filter(name=request.user).order_by("id")
         orders = []
 
         for order in orders_list:
@@ -354,7 +354,7 @@ class OrderDeleteApi(View):
         menu_id = kwargs.get("menu_id")
         Order.objects.get(name=request.user, menu_id=menu_id).delete()
 
-        orders_list = Order.objects.filter(name=request.user)
+        orders_list = Order.objects.filter(name=request.user).order_by("id")
         orders = []
         
         for order in orders_list:

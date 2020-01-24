@@ -12,26 +12,26 @@
         <div class="w-full flex flex-wrap mb-5">
             <div v-for="order in orders" class="flex border w-full border-gray-400 p-2">
                 <div class="flex w-1/2">
-                    <div v-bind:style="{'background-image': 'url(../../media/' + order.menu__photo + ')' }" class="w-32 h-32 bg-cover bg-center border border-gray-400"></div>
+                    <div v-bind:style="{'background-image': 'url(' + order.photo + ')' }" class="w-32 h-32 bg-cover bg-center border border-gray-400"></div>
                     <ul class="ml-5">
                         <li class="h-full flex flex-col justify-between">
                             <div class="flex flex-col">
-                                <span class="font-bold">[[order.menu__name]]</span>
-                                <span class="text-xs text-gray-500 mb-10">[[order.menu__description]]</span>
+                                <span class="font-bold">[[order.name]]</span>
+                                <span class="text-xs text-gray-500 mb-10">[[order.description]]</span>
                             </div>
                             <div class="flex">
-                                <span class="mr-2">[[order.menu__price]]원 X </span>
-                                <div><i class="far fa-minus-square cursor-pointer" v-on:click="order.count --, edit_count(order.menu__id, order.count)"></i></div>
+                                <span class="mr-2">[[order.price]]원 X </span>
+                                <div><i class="far fa-minus-square cursor-pointer" v-on:click="order.count --, edit_count(order.id, order.count)"></i></div>
                                 <div class="font-bold"><span class="m-2">[[order.count]]</span></div>
-                                <div><i class="far fa-plus-square cursor-pointer" v-on:click="order.count ++, edit_count(order.menu__id, order.count)"></i></div>
-                                <span class="ml-2">= [[order.menu__price * order.count]]원</span>
+                                <div><i class="far fa-plus-square cursor-pointer" v-on:click="order.count ++, edit_count(order.id, order.count)"></i></div>
+                                <span class="ml-2">= [[order.price * order.count]]원</span>
                                 <!-- <div><span v-on:click="" class="text-xs ml-2 bg-red-500 text-white cursor-pointer rounded-sm">수량 변경</span></div> -->
                             </div>
                         </li>
                     </ul>
                 </div>
                 <div class="w-1/2 text-right h-10 mt-1">
-                    <span v-on:click="delete_order(order.menu__id)" class="rounded-sm bg-red-500 text-white cursor-pointer p-1">삭제</span>
+                    <span v-on:click="delete_order(order.id)" class="rounded-sm bg-red-500 text-white cursor-pointer p-1">삭제</span>
                 </div>
             </div>
         </div>

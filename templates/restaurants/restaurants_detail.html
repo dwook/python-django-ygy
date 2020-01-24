@@ -24,7 +24,7 @@
                 <span v-on:click="add_zzim(rest.id)" class="text-sm cursor-pointer text-red-600 font-bold border-b border-red-600">찜 <i v-bind:class="zzim_flag?'fas fa-heart':'far fa-heart'"></i></span>
             </div>
             <div class="flex border border-gray-400 p-2 text-sm">
-                <div v-bind:style="{'background-image': 'url(../../media/' + rest.photo + ')' }" class="w-32 h-32 bg-cover bg-center border border-gray-400"></div>
+                <div v-bind:style="{'background-image': 'url(' + rest.photo + ')' }" class="w-32 h-32 bg-cover bg-center border border-gray-400"></div>
                 <ul class="ml-5 flex flex-col justify-center">
                     <li class="mb-2">
                         <span class="text-gray-500 mr-2">최소주문금액</span>
@@ -54,7 +54,7 @@
         <div class="flex flex-col px-64 pb-2 mb-3">
             <div v-for="menu in menus" class="flex border border-gray-400 p-2">
                 <div class="flex w-1/2">
-                    <div v-bind:style="{'background-image': 'url(../../media/' + menu.photo + ')' }" class="w-32 h-32 bg-cover bg-center border border-gray-400"></div>
+                    <div v-bind:style="{'background-image': 'url(' + menu.photo + ')' }" class="w-32 h-32 bg-cover bg-center border border-gray-400"></div>
                     <ul class="ml-5">
                         <li class="h-full flex flex-col justify-between">
                             <div class="flex flex-col">

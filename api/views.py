@@ -281,7 +281,7 @@ class OrderCountApi(View):
             if type(int(count)) is int:
 
                 if int(count) < 1 or int(count) > 100:
-                    orders_list = Order.objects.filter(name=request.user)
+                    orders_list = Order.objects.filter(name=request.user).order_by("id")
                     orders = []
                     
                     for order in orders_list:
@@ -316,7 +316,7 @@ class OrderCountApi(View):
                     order.count = count
                     order.save()
 
-                    orders_list = Order.objects.filter(name=request.user)
+                    orders_list = Order.objects.filter(name=request.user).order_by("id")
                     orders = []
 
                     for order in orders_list:

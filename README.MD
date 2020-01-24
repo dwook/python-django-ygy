@@ -2,7 +2,9 @@
 
 웹사이트 클론 코딩 with Python, Django, VueJS, PostgreSQL, AWS
 
-최종 결과 ->
+완성 : http://yogiyo-clone.7k63qgizbq.ap-northeast-2.elasticbeanstalk.com/
+
+개발 기간 : 2020-01-10 ~ 2020-01-23(2주)
 
 ## To-Do List
 

@@ -15,7 +15,7 @@ from orders.models import Order
 @method_decorator(ensure_csrf_cookie, name="dispatch")
 class HomeApi(View):
     def get(self, request, *args, **kwargs):
-        groups_list = Group.objects.all()
+        groups_list = Group.objects.all().order_by("id")
         groups = []
 
         for group in groups_list:

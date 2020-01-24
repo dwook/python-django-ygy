@@ -6,7 +6,7 @@
     <div id="contents">
         <div class="flex px-64 py-2 mb-3 border-b border-gray-500">
             <ul class="flex justify-between items-center w-2/3">
-                <li v-on:click="ChangeUrl(group.id), fetch_restaurants(group.id)" v-for="group in groups" v-if="group.id != 1">
+                <li v-on:click="ChangeUrl(group.id), fetch_restaurants(group.id)" v-for="group in groups" v-if="group.name != 'Red'">
                     <div class="border-b-2 hover:border-black" v-bind:class="selected_group_id == group.id?'border-black':'border-white'">
                        <span class="px-2 text-black cursor-pointer">[[group.name]]</span>
                     </div>

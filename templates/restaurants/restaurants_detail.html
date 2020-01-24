@@ -6,7 +6,7 @@
     <div id="contents">
         <div class="flex px-64 py-2 mb-3 border-b border-gray-500 shadow-md">
             <ul class="flex justify-between items-center w-2/3">
-                <li v-for="group in groups" v-if="group.id != 1">
+                <li v-for="group in groups" v-if="group.name != 'Red'">
                     <div class="border-b-2 hover:border-black" v-bind:class="previous_page == group.id?'border-black':'border-white'">
                         <a v-bind:href="'../../groups/' + group.id" class="px-2">
                             <span class="text-black cursor-pointer">[[group.name]]</span>

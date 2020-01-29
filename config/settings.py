@@ -25,6 +25,9 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET", "NTfF6fEHnYx^P6@HJx@K6M")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG") == "True"
 
+# django-dotenv 패키지를 설치하고 로컬에 .env 파일을 생성해서 DEBUG 변수를 정의해 놓음으로써
+# 로컬과 AWS에 서로 조금씩 다르게 정의되어 있는 환경변수를 각각 적용되게 할 수 있음
+# 참고로 로컬의 .env에는 DEBUG 변수가 True로 정의되어 있지만, AWS에는 DEBUG 변수가 없음
 if DEBUG:
     ALLOWED_HOSTS = []
 else:
@@ -141,8 +144,11 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Image 파일 저장을 위한 설정(uploads폴더는 .gitignore에 추가하는게 좋음)
 # config.urls에도 로컬에서 uploads의 파일을 사용하기 위해 설정 필요
+# 업로드를 위한 경로 설정
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
+
 # MEDIA_ROOT에서 온 MEDIA를 다루는 URL
+# uploads 폴더에 있는 이미지 파일 가져오기 위한 url 경로 설정
 MEDIA_URL = "/media/"
 
 # User Model을 원하는 형태로 맞춤시키기 위한 설정(Custom Model)

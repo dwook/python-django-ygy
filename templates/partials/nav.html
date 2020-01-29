@@ -19,9 +19,14 @@
                 </li>
             {% else %}
                 <li class="px-2 py-2 text-white">
-                    <a href="{% url 'users:login' %}">로그인 | 회원가입</a>
+                    <a href="{% url 'users:login' %}" onclick="login()">로그인 | 회원가입</a>
                 </li>
             {% endif %}
         </ul>
     </div>
 </div>
+<script type="text/javascript">
+function login() {
+    alert("크롬 접속 권장. 가입을 원하지 않으시면 ID : test@test.com / 비번 : test 로 로그인해서 확인해주세요.");
+}
+</script>

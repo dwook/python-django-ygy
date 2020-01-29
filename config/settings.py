@@ -26,8 +26,8 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET", "NTfF6fEHnYx^P6@HJx@K6M")
 DEBUG = os.environ.get("DEBUG") == "True"
 
 # django-dotenv 패키지를 설치하고 로컬에 .env 파일을 생성해서 DEBUG 변수를 정의해 놓음으로써
-# 로컬과 AWS에 서로 조금씩 다르게 정의되어 있는 환경변수를 각각 적용되게 할 수 있음
-# 참고로 로컬의 .env에는 DEBUG 변수가 True로 정의되어 있지만, AWS에는 DEBUG 변수가 없음
+# 로컬과 AWS에 서로 조금씩 다르게 정의되어 있는 환경변수를 각 환경에 맞게 적용할 수 있음
+# 참고로 로컬의 .env에는 DEBUG 변수가 True로 정의되어 있지만, AWS에는 DEBUG 환경변수가 없음
 if DEBUG:
     ALLOWED_HOSTS = []
 else:
@@ -157,9 +157,16 @@ AUTH_USER_MODEL = "users.User"
 
 # S3 설정
 if not DEBUG:
-
+    """
+    https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
+    원래 가이드대로라면 DEFAULT_FILE_STORAGE, STATICFILES_STORAGE
+    둘다 storages.backends.s3boto3.S3Boto3Storage 로 값을 줘야한다.
+    근데 이렇게 하면 upload와 static 파일이 모두 같은 폴더로 가게 되기 때문에
+    경로를 다르게 지정해주는게 좋다.
+    """
     DEFAULT_FILE_STORAGE = "config.custom_storages.UploadStorage"
     STATICFILES_STORAGE = "config.custom_storages.StaticStorage"
+
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
     AWS_STORAGE_BUCKET_NAME = "yogiyo-clone-aws"

@@ -31,9 +31,12 @@
     <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
-        // CSRF Token 관련하여 전역변수로 선언
-        axios.defaults.xsrfCookieName = 'csrftoken';
-        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+        // Axios 라이브러리에서 지원해주는 CSRF Token 관련 전역변수 선언.
+        // 브라우져에서 서버로 POST나 DELETE, PUT 같은 요청을 보낼 때,
+        // 디폴트로 쿠키에 보관되어 있는 CSRF 토큰을 서버로 보냄.
+        // 아래 이름들은 Django에서 설정할 수 있음.
+        axios.defaults.xsrfCookieName = 'csrftoken'; // 서버에서 받는 CSRF 토큰 이름
+        axios.defaults.xsrfHeaderName = 'X-CSRFToken'; // Vue.js에서 서버로 보내는 CSRF 토큰 이름
     </script>
     {% block javascript %}
     

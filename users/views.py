@@ -9,13 +9,11 @@ from django.contrib.auth import authenticate, login, logout
 from . import forms, models
 from users.mixins import LoggedInOnlyView, LoggedOutOnlyView, EmailLoginOnlyView
 
-
+# 이메일 로그인
 class LoginView(LoggedOutOnlyView, FormView):
     template_name = "users/login.html"
     form_class = forms.LoginForm
-    # reverse_lazy는 View를 호출했을 때, 바로가 아닌 필요할 때(이 경우는 성공했을 때) 실행되도록 함
-    # success_url = reverse_lazy("common:home")
-    # form_valid는 FormView의 메서드 중 하나로 form.is_valid()를 대체하는 것으로 보면 된다.
+    # form_valid는 FormView의 메서드 중 하나로 FBV의 form.is_valid()를 대체하는 것으로 보면 된다.
     def form_valid(self, form):
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
@@ -24,7 +22,9 @@ class LoginView(LoggedOutOnlyView, FormView):
             login(self.request, user)
         return super().form_valid(form)
 
+    # form_valid()는 마지막에 get_success_url()을 redirect로 호출한다
     def get_success_url(self):
+        # 서버에서 요청이 들어왔을 때 URL에 파라메터로 next가 있으면 그 url에 해당하는 페이지로 이동
         next_page = self.request.GET.get("next")
         if next_page is not None:
             return next_page
@@ -32,9 +32,12 @@ class LoginView(LoggedOutOnlyView, FormView):
             return reverse("common:home")
 
 
+# 이메일 회원가입
 class SignUpView(LoggedOutOnlyView, FormView):
     template_name = "users/signup.html"
     form_class = forms.SignUpForm
+    # reverse_lazy는 View를 호출했을 때, 실행되는게 아니라 나중에 필요할 때(이 경우는 성공했을 때) 실행되도록 함
+    # form_valid()를 지나 가입이 성공했을 때, success_url이 실행되니까 그때 reverse()됨
     success_url = reverse_lazy("common:home")
 
     def form_valid(self, form):
@@ -68,6 +71,7 @@ def naver_login(request):
         client_id = os.environ.get("AWS_NAVER_ID")
         redirect_uri = "http://yogiyo-clone.7k63qgizbq.ap-northeast-2.elasticbeanstalk.com/users/login/naver/callback"
     # crsf 방지를 위해 uuid로 state(상태 토큰값) 생성
+    # uuid는 고유한 id값이라고 보면 되는데, uuid4()는 무작위 uuid를 생성함
     state = uuid.uuid4().hex[:20]
     # 네이버 ID로 로그인 인증 요청 API
     return redirect(

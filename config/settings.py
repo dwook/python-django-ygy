@@ -151,7 +151,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 # uploads 폴더에 있는 이미지 파일 가져오기 위한 url 경로 설정
 MEDIA_URL = "/media/"
 
-# User Model을 원하는 형태로 맞춤시키기 위한 설정(Custom Model)
+# 기본적으로 주어지는 User Model을 사용하는게 아닌,
+# 우리가 원하는 형태로 바꿔 사용하기 위한 설정(Custom Model)
+# 여기서는 users.User를 사용하겠다는 뜻임
 AUTH_USER_MODEL = "users.User"
 
 
@@ -163,6 +165,7 @@ if not DEBUG:
     둘다 storages.backends.s3boto3.S3Boto3Storage 로 값을 줘야한다.
     근데 이렇게 하면 upload와 static 파일이 모두 같은 폴더로 가게 되기 때문에
     경로를 다르게 지정해주는게 좋다.
+    config/custom_strages.py 생성하여 따로 저장되게 경로 설정.
     """
     DEFAULT_FILE_STORAGE = "config.custom_storages.UploadStorage"
     STATICFILES_STORAGE = "config.custom_storages.StaticStorage"

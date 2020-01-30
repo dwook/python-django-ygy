@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from users.models import User
 
-
+# AWS 배포할때 수퍼 유저 생성
 class Command(BaseCommand):
 
     help = "This command creates superuser"

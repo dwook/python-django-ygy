@@ -2,7 +2,6 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.generic import View
-from django.views.generic.list import BaseListView
 import json
 from groups.models import Group
 from restaurants.models import Restaurant
@@ -13,12 +12,31 @@ from orders.models import Order
 # csrf_exempt : 임시로 CSRF 미체크.
 # @method_decorator(csrf_exempt, name="dispatch")
 """
+Django에서 View에 데코레이터를 쓰려면 보통 FBV에서만 기본적으로 사용 가능.
+CBV에서 데코레이터를 사용하려면 아래처럼 @method_decorator와 dispatch() 메서드를 사용해야함.
+
+@method_decorator(ensure_csrf_cookie, name="dispatch")
+class HomeApi(View):
+
+위 예시는 CBV에 데코레이터를 사용한 것인데,
+아래처럼 HomeApi 클래스 안에 dispatch() 메서드를 사용하고
+그 dispatch() 메서드에 @method_decorator를 붙혀 사용하겠다는 의미이다.
+
+class HomeApi(View):
+    @method_decorator(ensure_csrf_cookie)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+@method_decorator는 function형 데코레이터를 method형 데코레이터로 로 변환시켜주는 데코레이터이다.
+위 예시로 보자면 ensure_csrf_cookie가 function인데 이걸 method로 사용해야 하기 때문에 사용한 것이다.
+"""
+"""
 ensure_csrf_cookie : 이미 만들어진 CSRF 토큰이 있으면 클라이언트로 그걸 보내고 없으면 새로 생성해서 보냄.
 Django에서 CSRF 토큰 보낼 때 토큰 이름은 디폴트가 'csrftoken'이라고 Django 문서에 있고 실제로 쿠키에서도 확인 가능.
 https://docs.djangoproject.com/en/3.0/ref/settings/#csrf-cookie-name
-Vue.js에서 서버로 CSRF 토큰 보낼 때는 HTTP 패킷 Header에 담겨 오는데 'X_CSRFTOKEN'라는 이름으로 넘어옴.
+Vue.js에서 서버로 CSRF 토큰 보낼 때는 HTTP 패킷 Header에 담겨 오는데 'X_CSRFTOKEN'라는 이름으로 넘겨줘야함.
 https://docs.djangoproject.com/en/3.0/ref/settings/#csrf-header-name
-위에 두 이름 모두 Django에서 설정하는 것이고 클라이언트와 서버가 서로 통신할 때 설정된 것과 맞아야함.
+위에 두 이름 모두 Django에서 설정하는 것이고 클라이언트와 서버가 서로 통신할 때 설정된 이름과 동일해야함.
 """
 # dispatch()는 요청이 어떤 형태인지(GET인지 POST인지 등등)를 보고 거기에 맞는 함수 호출
 @method_decorator(ensure_csrf_cookie, name="dispatch") # 클라이언트에서 온 요청을 보고 ensure_csrf_cookie 실행
@@ -39,13 +57,10 @@ class HomeApi(View):
         return JsonResponse(data=groups, safe=False)
 
 # 그룹바 조회
-class GroupsBarApi(BaseListView): # View 쓰려다가 BaseListView 그냥 한번 사용해봄
-    model = Group
+class GroupsBarApi(View):
+    def get(self, request, *args, **kwargs):
+        groups = list(Group.objects.all().values())
 
-    def render_to_response(self, context, **response_kwargs):
-        # values()는 테이블에서 가져온 각 레코드들을 각각의 컬럼별로 나누어 dict형태로 만들어 줌
-        # print(context)
-        groups = list(context["object_list"].values())
         return JsonResponse(data=groups, safe=False)
 
 # 음식점 리스트 조회

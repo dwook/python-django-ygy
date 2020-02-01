@@ -4,10 +4,16 @@ from . import models
 
 class LoginForm(forms.Form):
     email = forms.EmailField(
-        widget=forms.EmailInput(attrs={"placeholder": "이메일 주소 입력(필수)"})
+        widget=forms.EmailInput(
+            attrs={
+                "placeholder": "이메일 주소 입력(필수) / 가입을 원하지 않으시면 테스트용 주소 test@test.com 입력"
+            }
+        )
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={"placeholder": "비밀번호 입력(필수)"})
+        widget=forms.PasswordInput(
+            attrs={"placeholder": "비밀번호 입력(필수) / 가입을 원하지 않으시면 테스트용 비번 test 입력"}
+        )
     )
     # clean으로 기본적인 유효성 체크
     # clean_xxx 이렇게 특정 필드로 clean하는 것이 아니면, 에러를 직접 필드마다 추가해줘야한다.

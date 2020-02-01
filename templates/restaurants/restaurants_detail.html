@@ -99,7 +99,7 @@
             fetch_all_groups: function () {
                 var vm = this;
 
-                axios.get("/api/groups-bar/")
+                axios.get("/api/groupbar/")
                     .then(function (res) {
                         console.log("res.data", res.data);
                         vm.groups = res.data;
@@ -120,7 +120,7 @@
             fetch_restaurant: function () {
                 var vm = this;
 
-                axios.get("/api/{{restaurant_id}}/restaurant-detail-api/")
+                axios.get("/api/{{restaurant_id}}/restaurant-detail/")
                     .then(function (res) {
                         vm.restaurant = res.data.restaurant;
                         vm.payment_method = res.data.payment_method;
@@ -134,7 +134,7 @@
             fetch_menus: function () {
                 var vm = this;
 
-                axios.get("/api/{{restaurant_id}}/menus-list-api/")
+                axios.get("/api/{{restaurant_id}}/menus/")
                     .then(function (res) {
                         console.log("menus", res.data);
                         vm.menus = res.data;
@@ -147,7 +147,7 @@
             add_zzim: function (restaurant_id) {
                 var vm = this;
                 console.log("zzim " + restaurant_id);
-                axios.post("/api/zzim-api/", {"restaurant_id": restaurant_id})
+                axios.post("/api/zzims/", {"restaurant_id": restaurant_id})
                     .then(function (res) {
                         vm.zzim_flag = res.data.zzim_flag
                         console.log("post res.data", res.data.zzim_flag);
@@ -159,7 +159,7 @@
             add_order: function (menu_id) {
                 var vm = this;
                 console.log("menu_id " + menu_id);
-                axios.post("/api/order-check-api/", {"menu_id": menu_id})
+                axios.post("/api/orders/check/", {"menu_id": menu_id})
                     .then(function (res) {
                         console.log("res.data.order_flag", res.data.order_flag);
                         var delete_flag = "False";
@@ -172,7 +172,7 @@
                             }
                         }
                         console.log("delete_flag", delete_flag);
-                        axios.post("/api/order-add-api/", {"menu_id": menu_id, "delete_flag": delete_flag})
+                        axios.post("/api/orders/add/", {"menu_id": menu_id, "delete_flag": delete_flag})
                             .then(function (res) {
                                 vm.order_flag = res.data.order_flag
                                 console.log("post res.data", res.data.order_flag);

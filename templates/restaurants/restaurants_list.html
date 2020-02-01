@@ -64,7 +64,7 @@
             fetch_all_groups: function () {
                 var vm = this;
 
-                axios.get("/api/groups-bar/")
+                axios.get("/api/groupbar/")
                     .then(function (res) {
                         console.log("res.data", res.data);
                         vm.groups = res.data;
@@ -82,7 +82,7 @@
                     console.log("group id", group_id);
                 }
                 
-                axios.get("/api/" + group_id + "/restaurants-list/")
+                axios.get("/api/" + group_id + "/restaurants/")
                     .then(function (res) {
                         console.log("res.data", res.data);
                         vm.restaurants = res.data;
@@ -98,7 +98,7 @@
                 var vm = this;
                 var postData = {name: this.name};
                 console.log(postData);
-                axios.post("/api/search-restaurants/", postData)
+                axios.post("/api/restaurants/search/", postData)
                     .then(function (res) {
                         console.log("post res.data", res.data);
                         vm.restaurants = res.data;

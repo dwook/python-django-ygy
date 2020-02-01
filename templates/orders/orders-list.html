@@ -72,7 +72,7 @@
             fetch_orders: function () {
                 var vm = this;
 
-                axios.get("/api/order-list-api/")
+                axios.get("/api/orders/")
                     .then(function (res) {
                         console.log("fetch_orders", res.data);
                         vm.orders = res.data.orders;
@@ -87,7 +87,7 @@
                 var vm = this;
                 var postParam = {"menu_id": menu_id, "count": count};
 
-                axios.post("/api/order-count-api/", postParam)
+                axios.post("/api/orders/count/", postParam)
                     .then(function (res) {
                         console.log("edit_count", res.data);
                         vm.orders = res.data.orders;
@@ -103,7 +103,7 @@
             delete_order: function (menu_id) {
                 var vm = this;
 
-                axios.delete("/api/order-delete-api/" + menu_id + "/")
+                axios.delete("/api/orders/delete/" + menu_id + "/")
                     .then(function (res) {
                         console.log("delete_order", res.data);
                         vm.orders = res.data.orders;
@@ -118,7 +118,7 @@
             delete_all_orders: function () {
                 var vm = this;
 
-                axios.delete("/api/order-delete-all-api/")
+                axios.delete("/api/orders/delete-all/")
                     .then(function (res) {
                         console.log("delete_all_orders", res.data);
                         vm.orders = res.data.orders;

@@ -20,7 +20,6 @@
 - [x] Orders
 - [x] Mixins(보안)
 - [ ] 추가로 해보기 : 현재위치 찾기(https://openweathermap.org/ API와 navigator.geolocation.getCurrentPosition() 사용 예정)
-- [ ] 근본없는 API URL 수정 필요 언젠가 썸데이..
 
 ## 기타 자료 출처
 
